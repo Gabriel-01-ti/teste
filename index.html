@@ -1,223 +1,312 @@
 <!DOCTYPE html>
-<a href="sobre.html">Sobre</a>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Diagnóstico Agrícola</title>
-  <link rel="stylesheet" href="style.css">
-  <meta name="google-site-verification" content="-2xsMwQkY93C4kgW1fRAF0xyCxTqE0__nhGQHI2nDtk" />
-  <title>Diagnóstico de Pragas Agrícolas Online</title>
-  <meta name="description" content="Identifique pragas agrícolas de forma rápida e fácil com nosso diagnóstico online.">
-  <meta name="keywords" content="diagnóstico de pragas, agricultura, plantas, controle de pragas">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lancheria NomeAqui</title>
 
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+  background:#fff8f0;
+  color:#333;
+}
+
+/* HEADER */
+header{
+  background:linear-gradient(135deg,#ff6600,#ff9900);
+  color:white;
+  text-align:center;
+  padding:30px 15px;
+  animation:fadeDown 0.8s ease;
+}
+
+@keyframes fadeDown{
+  from{opacity:0; transform:translateY(-20px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:white;
+  border-radius:15px;
+  overflow:hidden;
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
+  transition:0.3s;
+  animation:fadeUp 0.8s ease;
+}
+
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(20px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+.card:hover{
+  transform:translateY(-5px) scale(1.02);
+}
+
+.card img{
+  width:100%;
+  height:140px;
+  object-fit:cover;
+}
+
+.card-content{
+  padding:15px;
+}
+
+.price{
+  color:#ff6600;
+  font-weight:bold;
+  margin:5px 0;
+}
+
+button{
+  background:#ff6600;
+  border:none;
+  padding:10px;
+  border-radius:8px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#e65c00;
+  transform:scale(1.05);
+}
+
+/* CARRINHO */
+.carrinho{
+  margin-top:40px;
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.1);
+}
+
+.total{
+  font-size:18px;
+  font-weight:bold;
+  margin:10px 0;
+}
+
+/* MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  animation:fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+.modal-content{
+  background:white;
+  padding:25px;
+  border-radius:15px;
+  width:90%;
+  max-width:400px;
+  animation:fadeUp 0.3s ease;
+}
+
+.modal-content h3{
+  margin-bottom:15px;
+}
+
+input, select{
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:8px;
+  border:1px solid #ff6600;
+}
+
+.hidden{
+  display:none;
+}
+
+@media(min-width:768px){
+  .layout{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:30px;
+  }
+}
+
+</style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>🌱 Diagnóstico de Plantas</h1>
-    
-    <label for="planta">Escolha a planta:</label>
-    <select id="planta" onchange="carregarSintomas()">
-      <option value="">-- Selecione --</option>
-      <option value="milho">Milho 🌽</option>
-      <option value="soja">Soja 🌿</option>
-      <option value="trigo">Trigo 🌾</option>
-      <option value="feijao">Feijão 🫘</option>
-      <option value="aveia">Aveia 🌱</option>
-      <option value="laranja">Laranja / Bergamota 🍊</option>
-      <option value="batata">Batata 🥔</option>
-      <option value="repolho">Repolho / Alface 🥬</option>
-      <option value="uva">Uva 🍇</option>
-      <option value="tabaco">Tabaco 🍃</option>
-      <option value="arroz">Arroz 🍚</option>
-    </select>
 
-    <div id="sintomas-container" style="display: none;">
-      <label for="sintoma">Escolha o sintoma:</label>
-      <select id="sintoma"></select>
-      <button onclick="mostrarDiagnostico()">Ver diagnóstico</button>
+<header>
+  <h1>🔥 Lancheria NomeAqui 🔥</h1>
+  <p>O melhor Xis da cidade</p>
+</header>
+
+<div class="container layout">
+
+  <div>
+    <h2>🍔 Hambúrgueres</h2>
+    <div class="grid">
+      <div class="card">
+        <img src="imagens/xburguer.jpg">
+        <div class="card-content">
+          <h3>X-Burguer</h3>
+          <div class="price">R$18</div>
+          <button onclick="addItem('X-Burguer',18)">Adicionar</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="imagens/xsalada.jpg">
+        <div class="card-content">
+          <h3>X-Salada</h3>
+          <div class="price">R$20</div>
+          <button onclick="addItem('X-Salada',20)">Adicionar</button>
+        </div>
+      </div>
     </div>
-
-    <div id="resultado"></div>
   </div>
 
-  <script>
-const dados = {
-  milho: {
-    "Manchas alongadas, centro cinza e borda avermelhada; folhas amarelam.": {
-      problema: "Cercosporiose (Cercospora spp.) — Fungos favorecidos por alta umidade e restos culturais infectados.",
-      solucao: "Rotação, híbridos resistentes, manejo de umidade.",
-      fungicida: "Tebuconazol"
-    },
-    "Pústulas marrons/alaranjadas; queda precoce de folhas.": {
-      problema: "Ferrugens (Puccinia spp.) — Fungos, cada tipo com clima específico.",
-      solucao: "Cultivares resistentes, monitoramento, fungicidas.",
-      fungicida: "Trifloxistrobina"
-    },
-    "Manchas brancas com halo marrom; folhas secam.": {
-      problema: "Mancha branca do milho (Phaeosphaeria maydis) — Fungos em clima úmido e frio.",
-      solucao: "Rotação, fungicidas no início dos sintomas.",
-      fungicida: "Propiconazol"
-    },
-    "Manchas alongadas verde-claras que evoluem para marrom.": {
-      problema: "Helmintosporiose (Exserohilum turcicum) — Fungos em temperatura amena e alta umidade.",
-      solucao: "Cultivares tolerantes, fungicidas, espaçamento adequado.",
-      fungicida: "Azoxistrobina"
-    },
-    "Folhas avermelhadas ou amareladas, plantas atrofiadas.": {
-      problema: "Enfezamento vermelho e pálido (Mollicutes) — Transmitidos por cigarrinhas (Dalbulus maidis).",
-      solucao: "Controle de vetores, plantio na época recomendada.",
-      fungicida: "Não aplicável"
+  <div class="carrinho">
+    <h2>🛒 Carrinho</h2>
+    <div id="lista"></div>
+    <div class="total">Total: R$ <span id="total">0</span></div>
+    <button onclick="abrirModal()">Finalizar Pedido</button>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3>Finalizar Pedido</h3>
+
+    <input type="text" id="nome" placeholder="Seu nome">
+
+    <select id="tipo" onchange="verificarEntrega()">
+      <option value="Retirada">Retirada</option>
+      <option value="Local">Comer no local</option>
+      <option value="Entrega">Entrega</option>
+    </select>
+
+    <div id="endereco" class="hidden">
+      <input type="text" id="rua" placeholder="Rua">
+      <input type="text" id="numero" placeholder="Número">
+      <input type="text" id="bairro" placeholder="Bairro">
+      <p style="font-size:12px;color:#555;">
+        ⚠ Taxa de entrega será informada no WhatsApp.
+      </p>
+    </div>
+
+    <button onclick="enviarPedido()">Enviar para WhatsApp</button>
+  </div>
+</div>
+
+<script>
+
+const NUMERO_WHATSAPP="5555996698757";
+let carrinho=[];
+
+function addItem(nome,preco){
+  carrinho.push({nome,preco});
+  atualizar();
+}
+
+function atualizar(){
+  let lista=document.getElementById("lista");
+  let total=0;
+  lista.innerHTML="";
+  carrinho.forEach(item=>{
+    total+=item.preco;
+    lista.innerHTML+=item.nome+" - R$"+item.preco+"<br>";
+  });
+  document.getElementById("total").innerText=total;
+}
+
+function abrirModal(){
+  if(carrinho.length===0){
+    alert("Carrinho vazio!");
+    return;
+  }
+  document.getElementById("modal").style.display="flex";
+}
+
+function verificarEntrega(){
+  let tipo=document.getElementById("tipo").value;
+  let endereco=document.getElementById("endereco");
+  endereco.classList.toggle("hidden", tipo!=="Entrega");
+}
+
+function enviarPedido(){
+  let nome=document.getElementById("nome").value;
+  let tipo=document.getElementById("tipo").value;
+
+  if(!nome){
+    alert("Digite seu nome");
+    return;
+  }
+
+  let mensagem="🍔 Pedido - Lancheria NomeAqui\n\n";
+  mensagem+="Cliente: "+nome+"\n";
+  mensagem+="Tipo: "+tipo+"\n\n";
+
+  if(tipo==="Entrega"){
+    let rua=document.getElementById("rua").value;
+    let numero=document.getElementById("numero").value;
+    let bairro=document.getElementById("bairro").value;
+
+    if(!rua||!numero||!bairro){
+      alert("Preencha o endereço completo.");
+      return;
     }
-  },
-  soja: {
-    "Manchas escuras, folhas amarelam e caem.": {
-      problema: "Ferrugem-asiática (Phakopsora pachyrhizi) — Fungos em clima quente e úmido.",
-      solucao: "Vazio sanitário, cultivares resistentes, fungicidas.",
-      fungicida: "Trifloxistrobina"
-    },
-    "Micélio branco nos caules; murcha.": {
-      problema: "Mofo-branco (Sclerotinia sclerotiorum) — Fungos favorecidos por alta umidade.",
-      solucao: "Fungicidas preventivos, rotação, monitoramento.",
-      fungicida: "Tebuconazol"
-    },
-    "Manchas circulares com halo amarelado.": {
-      problema: "Mancha-alvo (Corynespora cassiicola) — Fungos em clima quente e úmido.",
-      solucao: "Fungicidas foliares, manejo de restos culturais.",
-      fungicida: "Azoxistrobina"
-    },
-    "Manchas escuras em vagens e hastes.": {
-      problema: "Antracnose (Colletotrichum truncatum) — Fungos transmitidos por sementes e restos.",
-      solucao: "Sementes sadias, rotação, fungicidas.",
-      fungicida: "Cymoxanil + Mancozebe"
-    },
-    "Lesões marrons nos caules; murcha.": {
-      problema: "Cancro-da-haste (Diaporthe phaseolorum) — Fungos em restos culturais e sementes.",
-      solucao: "Rotação, sementes tratadas, cultivares resistentes.",
-      fungicida: "Tebuconazol"
-    }
-  },
-  trigo: {
-    "Pústulas marrons; folhas secam.": {
-      problema: "Ferrugem-do-trigo (Puccinia triticina) — Fungos em zonas temperadas.",
-      solucao: "Cultivares resistentes, fungicidas.",
-      fungicida: "Propiconazol"
-    },
-    "Listras amarelas nas folhas.": {
-      problema: "Ferrugem-amarela (Puccinia striiformis) — Fungos em clima frio e úmido.",
-      solucao: "Cultivares resistentes, manejo de semeadura.",
-      fungicida: "Azoxistrobina"
-    },
-    "Manchas amareladas com centro escuro.": {
-      problema: "Mancha-amarela (Pyrenophora tritici-repentis) — Fungos transmitidos por restos culturais.",
-      solucao: "Rotação, manejo de restos.",
-      fungicida: "Tebuconazol"
-    },
-    "Pó branco sobre folhas.": {
-      problema: "Oídio (Blumeria graminis) — Fungos em clima seco e fresco.",
-      solucao: "Cultivares resistentes, fungicidas.",
-      fungicida: "Mancozebe"
-    },
-    "Espigas esbranquiçadas, grãos chochos.": {
-      problema: "Giberela (Fusarium graminearum) — Fungos em florescimento sob alta umidade.",
-      solucao: "Rotação, fungicidas na floração.",
-      fungicida: "Tebuconazol"
-    }
-  },
-  feijao: {
-    "Folhas amareladas e deformadas.": {
-      problema: "Mosaico-dourado (BGMV) — Vírus via mosca-branca.",
-      solucao: "Controle de vetor, variedades resistentes.",
-      fungicida: "Não aplicável"
-    },
-    "Manchas marrons com halo amarelo.": {
-      problema: "Crestamento-bacteriano-comum (Xanthomonas spp.) — Bactéria em clima quente e úmido.",
-      solucao: "Tratamento de sementes, rotação.",
-      fungicida: "Não aplicável"
-    },
-    "Manchas escuras em caules e vagens.": {
-      problema: "Antracnose (Colletotrichum lindemuthianum) — Fungos transmitidos por sementes.",
-      solucao: "Sementes sadias, fungicidas.",
-      fungicida: "Azoxistrobina"
-    },
-    "Pústulas alaranjadas nas folhas.": {
-      problema: "Ferrugem-do-feijoeiro (Uromyces appendiculatus) — Fungos em alta umidade.",
-      solucao: "Cultivares resistentes, fungicidas.",
-      fungicida: "Trifloxistrobina"
-    },
-    "Escurecimento e apodrecimento de raízes.": {
-      problema: "Podridão-radicular (Rhizoctonia solani) — Fungos no solo úmido.",
-      solucao: "Rotação, tratamento de sementes.",
-      fungicida: "Tebuconazol"
-    }
-  },
-  aveia: {
-    "Pó branco nas folhas e colmos; amarelecimento posterior.": {
-      problema: "Oídio (Blumeria graminis) — Fungos em clima seco com umidade moderada.",
-      solucao: "Cultivares resistentes, fungicidas específicos.",
-      fungicida: "Tebuconazol, Myclobutanil"
-    },
-    "Manchas alongadas marrons com halo amarelado.": {
-      problema: "Mancha-foliar (Drechslera avenae) — Fungos em alta umidade e plantio denso.",
-      solucao: "Rotação, espaçamento adequado, fungicidas.",
-      fungicida: "Azoxistrobina, Propiconazol"
-    },
-    "Pústulas alaranjadas na face inferior das folhas.": {
-      problema: "Ferrugem-da-folha (Puccinia coronata) — Fungos em clima úmido e temperaturas amenas.",
-      solucao: "Cultivares resistentes, fungicidas preventivos.",
-      fungicida: "Trifloxistrobina, Mancozebe"
-    },
-    "Colmos escurecidos e frágeis; plantas caem.": {
-      problema: "Podridão-de-colmo (Fusarium spp.) — Fungos no solo favorecidos por excesso de umidade.",
-      solucao: "Rotação, drenagem adequada.",
-      fungicida: "Não aplicável"
-    },
-    "Lesões esbranquiçadas com bordas escuras.": {
-      problema: "Mancha-branca (Phaeosphaeria spp.) — Fungos em clima úmido e frio.",
-      solucao: "Fungicidas no início dos sintomas, cultivares tolerantes.",
-      fungicida: "Tebuconazol, Piraclostrobina"
-    }
-  },
-  laranja: {
-    "Lesões circulares elevadas com halo amarelado.": {
-      problema: "Cancro-cítrico (Xanthomonas citri) — Bactéria transmitida por chuva e ferramentas.",
-      solucao: "Desinfecção de ferramentas, bactericidas à base de cobre.",
-      fungicida: "Bactericida cúprico"
-    },
-    "Manchas marrons ásperas em frutos e folhas.": {
-      problema: "Melanose (Phomopsis citri) — Fungos em alta umidade.",
-      solucao: "Fungicidas preventivos, poda para arejamento.",
-      fungicida: "Azoxistrobina, Mancozebe"
-    },
-    "Escurecimento da base do tronco; queda de folhas.": {
-      problema: "Podridão-parda (Phytophthora spp.) — Oomiceto favorecido por solos encharcados.",
-      solucao: "Melhorar drenagem, fungicidas específicos.",
-      fungicida: "Fosetil-Al, Mancozebe"
-    },
-    "Amarelecimento e queda de folhas; redução no vigor.": {
-      problema: "Tristeza-dos-citros (CTV) — Vírus transmitido por pulgões.",
-      solucao: "Uso de porta-enxertos tolerantes, controle de vetores.",
-      fungicida: "Não aplicável"
-    },
-    "Manchas cloróticas irregulares; folhas endurecidas.": {
-      problema: "Clorose-variegada-dos-citros (CVC) — Bactéria Xylella fastidiosa, transmitida por cigarrinhas.",
-      solucao: "Controle de vetores, erradicação de plantas doentes.",
-      fungicida: "Não aplicável"
-    }
-  },
-  batata: {
-    "Manchas escuras e úmidas nas folhas; podridão nos tubérculos.": {
-      problema: "Requeima (Phytophthora infestans) — Oomiceto em clima frio e úmido.",
-      solucao: "Fungicidas sistêmicos, manejo da irrigação.",
-      fungicida: "Mancozebe, Cymoxanil + Mancozebe"
-    },
-    "Murcha súbita; escurecimento dos vasos.": {
-      problema: "Murchadeira (Ralstonia solanacearum) — Bactéria transmitida pela água e solo.",
-      solucao: "Rotação, tubérculos sadios, manejo do solo.",
-      fungicida: "Não aplicável"
-    },
-    "Manchas circulares concêntricas nas folhas.": {
-      problema: "Alternariose (Alternaria solani) — Fungos em clima quente e seco.",
-      solucao: "Fungicidas específicos, espaçamento adequado.",
+
+    mensagem+="Endereço:\n";
+    mensagem+="Rua: "+rua+"\nNúmero: "+numero+"\nBairro: "+bairro+"\n\n";
+    mensagem+="⚠ Taxa de entrega será informada no atendimento.\n\n";
+  }
+
+  let total=0;
+  carrinho.forEach(item=>{
+    mensagem+=item.nome+" - R$"+item.preco+"\n";
+    total+=item.preco;
+  });
+
+  mensagem+="\nTotal (sem taxa): R$"+total;
+
+  let url=`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensagem)}`;
+  window.open(url,"_blank");
+}
+
+</script>
+
+</body>
+</html>ecíficos, espaçamento adequado.",
       fungicida: "Azoxistrobina, Mancozebe"
     },
     "Lesões ásperas e corticosas nos tubérculos.": {
@@ -298,3 +387,4 @@ function mostrarDiagnostico() {
   </script>
 </body>
 </html>
+
