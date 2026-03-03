@@ -14,79 +14,69 @@
 }
 
 body{
-  background:#fffaf2;
+  background:#fff8ef;
   color:#333;
 }
 
 /* HEADER */
 header{
-  background:linear-gradient(135deg,#ff7a00,#ffcc00);
+  background:linear-gradient(135deg,#ff6f00,#ffcc00);
   text-align:center;
-  padding:30px 15px;
+  padding:25px 15px;
   color:white;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:15px;
 }
 
 .logo{
-  width:120px;
-  max-width:40%;
-  height:auto;
-  border-radius:50%;
-  box-shadow:0 4px 15px rgba(0,0,0,0.2);
+  width:140px;
+  max-width:80%;
+  margin-bottom:10px;
 }
 
 header h1{
-  font-size:24px;
+  font-size:20px;
 }
 
 /* CATEGORIAS */
 .categorias{
   display:flex;
-  justify-content:center;
-  gap:12px;
-  flex-wrap:wrap;
-  margin:25px 10px;
+  gap:10px;
+  overflow-x:auto;
+  padding:15px;
 }
 
 .categoria-btn{
-  background:linear-gradient(145deg,#ffcc00,#ff8800);
+  background:linear-gradient(145deg,#ffd54f,#ff9800);
   border:none;
-  padding:12px 22px;
+  padding:10px 18px;
   border-radius:30px;
-  font-weight:600;
+  font-weight:bold;
   cursor:pointer;
+  white-space:nowrap;
   transition:.3s;
-  box-shadow:0 4px 12px rgba(0,0,0,0.15);
 }
 
 .categoria-btn:hover{
-  transform:translateY(-3px);
-  box-shadow:0 6px 18px rgba(0,0,0,0.25);
+  transform:scale(1.07);
 }
 
 /* PRODUTOS */
 .produtos{
   display:none;
-  max-width:1200px;
-  margin:auto;
-  padding:10px 15px;
+  padding:15px;
   animation:fadeIn .4s ease;
 }
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:20px;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:15px;
 }
 
 .card{
   background:white;
   border-radius:18px;
-  box-shadow:0 6px 20px rgba(0,0,0,0.1);
-  padding:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+  padding:12px;
   transition:.3s;
 }
 
@@ -94,52 +84,70 @@ header h1{
   transform:translateY(-5px);
 }
 
+.card img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  border-radius:14px;
+  margin-bottom:8px;
+}
+
 .card h3{
-  margin-bottom:6px;
+  font-size:14px;
 }
 
 .card p{
-  font-size:14px;
-  color:#666;
+  font-size:12px;
+  color:#777;
+  margin:5px 0;
 }
 
 .price{
   font-weight:bold;
-  color:#ff7a00;
-  margin:8px 0;
+  color:#ff6f00;
+  margin:6px 0;
 }
 
-/* BOTÃO BONITO */
-.btn-add{
-  background:linear-gradient(135deg,#ff7a00,#ffae00);
+.card button{
+  background:#ff6f00;
   border:none;
-  padding:10px;
-  border-radius:30px;
+  padding:8px;
+  border-radius:10px;
   color:white;
   font-weight:bold;
   cursor:pointer;
-  transition:.3s;
   width:100%;
+  transition:.3s;
 }
 
-.btn-add:hover{
-  transform:scale(1.05);
-  box-shadow:0 4px 15px rgba(0,0,0,0.2);
+.card button:hover{
+  background:#e65100;
 }
 
 /* CARRINHO */
 .carrinho{
-  max-width:600px;
-  margin:40px auto;
+  margin:20px;
   background:white;
-  padding:20px;
-  border-radius:20px;
-  box-shadow:0 6px 25px rgba(0,0,0,0.1);
+  padding:15px;
+  border-radius:18px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
 }
 
 .total{
   font-weight:bold;
   margin:10px 0;
+  font-size:16px;
+}
+
+.finalizar-btn{
+  background:linear-gradient(145deg,#ff9800,#ff6f00);
+  border:none;
+  padding:12px;
+  border-radius:30px;
+  color:white;
+  font-weight:bold;
+  width:100%;
+  cursor:pointer;
 }
 
 /* MODAL */
@@ -155,45 +163,42 @@ header h1{
 
 .modal-content{
   background:white;
-  padding:25px;
+  padding:20px;
   border-radius:20px;
   width:100%;
   max-width:400px;
-  animation:fadeIn .3s ease;
+}
+
+.modal-content h3{
+  margin-bottom:10px;
 }
 
 input,select{
   width:100%;
-  padding:12px;
-  margin-bottom:12px;
-  border-radius:12px;
-  border:1px solid #ffae00;
-  outline:none;
-}
-
-input:focus, select:focus{
-  border:1px solid #ff7a00;
-  box-shadow:0 0 8px rgba(255,122,0,0.3);
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:10px;
+  border:1px solid #ff9800;
 }
 
 .hidden{
   display:none;
 }
 
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(10px);}
-  to{opacity:1; transform:translateY(0);}
+.enviar-btn{
+  background:#25D366;
+  border:none;
+  padding:12px;
+  border-radius:30px;
+  color:white;
+  font-weight:bold;
+  width:100%;
+  cursor:pointer;
 }
 
-/* RESPONSIVO EXTRA */
-@media (max-width:500px){
-  header h1{
-    font-size:20px;
-  }
-  .categoria-btn{
-    padding:10px 18px;
-    font-size:14px;
-  }
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(10px);}
+  to{opacity:1;transform:translateY(0);}
 }
 </style>
 </head>
@@ -201,10 +206,8 @@ input:focus, select:focus{
 <body>
 
 <header>
-  <!-- COLOQUE SUA IMAGEM AQUI -->
-  <img src="logo.png" class="logo">
+  <img src="https://via.placeholder.com/300x150.png?text=SUA+LOGO" class="logo">
   <h1>🔥 Lancheria NomeAqui 🔥</h1>
-  <p>Escolha uma categoria</p>
 </header>
 
 <div class="categorias">
@@ -213,48 +216,83 @@ input:focus, select:focus{
   <button class="categoria-btn" onclick="mostrarCategoria('refrigerantes')">🥤 Refrigerantes</button>
 </div>
 
+<!-- XIS -->
 <div id="xis" class="produtos">
-  <div class="grid">
-    <div class="card">
-      <h3>Xis Tradicional</h3>
-      <p>Pão, carne, queijo e salada</p>
-      <div class="price">R$22</div>
-      <button class="btn-add" onclick="addItem('Xis Tradicional',22)">Adicionar</button>
-    </div>
-  </div>
+<div class="grid">
+
+<div class="card">
+<img src="https://via.placeholder.com/300x200?text=Xis+Tradicional">
+<h3>Xis Tradicional</h3>
+<p>Carne, queijo, alface, tomate e molho</p>
+<div class="price">R$22</div>
+<button onclick="addItem('Xis Tradicional',22)">Adicionar</button>
 </div>
 
+<div class="card">
+<img src="https://via.placeholder.com/300x200?text=Xis+Bacon">
+<h3>Xis Bacon</h3>
+<p>Carne, queijo, bacon crocante</p>
+<div class="price">R$25</div>
+<button onclick="addItem('Xis Bacon',25)">Adicionar</button>
+</div>
+
+</div>
+</div>
+
+<!-- PORÇÕES -->
 <div id="porcoes" class="produtos">
-  <div class="grid">
-    <div class="card">
-      <h3>Batata Frita</h3>
-      <p>Crocante e sequinha</p>
-      <div class="price">R$15</div>
-      <button class="btn-add" onclick="addItem('Batata Frita',15)">Adicionar</button>
-    </div>
-  </div>
+<div class="grid">
+
+<div class="card">
+<img src="https://via.placeholder.com/300x200?text=Batata+Frita">
+<h3>Batata Frita</h3>
+<p>Porção individual crocante</p>
+<div class="price">R$15</div>
+<button onclick="addItem('Batata Frita',15)">Adicionar</button>
 </div>
 
+<div class="card">
+<img src="https://via.placeholder.com/300x200?text=Calabresa">
+<h3>Calabresa Acebolada</h3>
+<p>Acompanha pão e molho</p>
+<div class="price">R$25</div>
+<button onclick="addItem('Calabresa Acebolada',25)">Adicionar</button>
+</div>
+
+</div>
+</div>
+
+<!-- REFRIGERANTES -->
 <div id="refrigerantes" class="produtos">
-  <div class="grid">
-    <div class="card">
-      <h3>Coca-Cola 2L</h3>
-      <p>Bem gelada</p>
-      <div class="price">R$12</div>
-      <button class="btn-add" onclick="addItem('Coca 2L',12)">Adicionar</button>
-    </div>
-  </div>
+<div class="grid">
+
+<div class="card">
+<img src="https://via.placeholder.com/300x200?text=Coca+2L">
+<h3>Coca-Cola 2L</h3>
+<div class="price">R$12</div>
+<button onclick="addItem('Coca 2L',12)">Adicionar</button>
+</div>
+
+<div class="card">
+<img src="https://via.placeholder.com/300x200?text=Guarana+2L">
+<h3>Guaraná 2L</h3>
+<div class="price">R$10</div>
+<button onclick="addItem('Guaraná 2L',10)">Adicionar</button>
+</div>
+
+</div>
 </div>
 
 <div class="carrinho">
 <h2>🛒 Carrinho</h2>
 <div id="lista"></div>
 <div class="total">Total: R$ <span id="total">0</span></div>
-<button class="btn-add" onclick="abrirModal()">Finalizar Pedido</button>
+<button class="finalizar-btn" onclick="abrirModal()">Finalizar Pedido</button>
 </div>
 
 <div class="modal" id="modal">
 <div class="modal-content">
+
 <h3>Finalizar Pedido</h3>
 
 <input type="text" id="nome" placeholder="Seu nome">
@@ -269,12 +307,13 @@ input:focus, select:focus{
 <input type="text" id="rua" placeholder="Rua">
 <input type="text" id="numero" placeholder="Número">
 <input type="text" id="bairro" placeholder="Bairro">
-<p style="font-size:12px;color:#666;">
+<p style="font-size:12px;color:#777;">
 ⚠ Taxa de entrega será informada no WhatsApp.
 </p>
 </div>
 
-<button class="btn-add" onclick="enviarPedido()">Enviar para WhatsApp</button>
+<button class="enviar-btn" onclick="enviarPedido()">Enviar para WhatsApp</button>
+
 </div>
 </div>
 
@@ -316,7 +355,7 @@ function abrirModal(){
 function verificarEntrega(){
   let tipo=document.getElementById("tipo").value;
   document.getElementById("endereco")
-    .classList.toggle("hidden", tipo!=="Entrega");
+  .classList.toggle("hidden", tipo!=="Entrega");
 }
 
 function enviarPedido(){
@@ -337,7 +376,7 @@ function enviarPedido(){
     let numero=document.getElementById("numero").value;
     let bairro=document.getElementById("bairro").value;
 
-    if(!rua||!numero||!bairro){
+    if(!rua || !numero || !bairro){
       alert("Preencha o endereço completo.");
       return;
     }
