@@ -1,403 +1,136 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lancheria NomeAqui</title>
-
+<title>Champions League Caseira</title>
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Segoe UI',sans-serif;
-}
+body { font-family: Arial; background:#0b0f2a; color:white; text-align:center; margin:0; padding:10px; }.logo { width:120px; margin:10px auto; }
 
-body{
-  background:#fff8ef;
-  color:#333;
-}
+h1 { font-size:18px; margin:5px 0; }
 
-/* HEADER */
-header{
-  background:linear-gradient(135deg,#ff6f00,#ffcc00);
-  text-align:center;
-  padding:25px 15px;
-  color:white;
-}
+input, button { padding:10px; border-radius:8px; border:none; font-size:14px; }
 
-.logo{
-  width:140px;
-  max-width:80%;
-  margin-bottom:10px;
-}
+#timesInput { width:95%; }
 
-header h1{
-  font-size:20px;
-}
+button { width:95%; background:#1e40af; color:white; margin-top:5px; }
 
-/* CATEGORIAS */
-.categorias{
-  display:flex;
-  gap:10px;
-  overflow-x:auto;
-  padding:15px;
-}
+#jogos { margin-top:10px; }
 
-.categoria-btn{
-  background:linear-gradient(145deg,#ffd54f,#ff9800);
-  border:none;
-  padding:10px 18px;
-  border-radius:30px;
-  font-weight:bold;
-  cursor:pointer;
-  white-space:nowrap;
-  transition:.3s;
-}
+.jogo { display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:8px; margin:5px 0; border-radius:10px; gap:5px; }
 
-.categoria-btn:hover{
-  transform:scale(1.07);
-}
+.time { flex:1; font-size:12px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-/* PRODUTOS */
-.produtos{
-  display:none;
-  padding:15px;
-  animation:fadeIn .4s ease;
-}
+.placar { display:flex; align-items:center; gap:3px; }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-  gap:15px;
-}
+.placar input { width:40px; text-align:center; }
 
-.card{
-  background:white;
-  border-radius:18px;
-  box-shadow:0 6px 18px rgba(0,0,0,0.08);
-  padding:12px;
-  transition:.3s;
-}
+.x { font-weight:bold; }
 
-.card:hover{
-  transform:translateY(-5px);
-}
+table { width:100%; margin-top:10px; border-collapse:collapse; font-size:12px; }
 
-.card img{
-  width:100%;
-  height:120px;
-  object-fit:cover;
-  border-radius:14px;
-  margin-bottom:8px;
-}
+th, td { padding:6px; border:1px solid #334155; }
 
-.card h3{
-  font-size:14px;
-}
+th { background:#1e40af; }
 
-.card p{
-  font-size:12px;
-  color:#777;
-  margin:5px 0;
-}
+.top { background:#16a34a; font-weight:bold; } </style>
 
-.price{
-  font-weight:bold;
-  color:#ff6f00;
-  margin:6px 0;
-}
-
-.card button{
-  background:#ff6f00;
-  border:none;
-  padding:8px;
-  border-radius:10px;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-  width:100%;
-  transition:.3s;
-}
-
-.card button:hover{
-  background:#e65100;
-}
-
-/* CARRINHO */
-.carrinho{
-  margin:20px;
-  background:white;
-  padding:15px;
-  border-radius:18px;
-  box-shadow:0 6px 20px rgba(0,0,0,0.08);
-}
-
-.total{
-  font-weight:bold;
-  margin:10px 0;
-  font-size:16px;
-}
-
-.finalizar-btn{
-  background:linear-gradient(145deg,#ff9800,#ff6f00);
-  border:none;
-  padding:12px;
-  border-radius:30px;
-  color:white;
-  font-weight:bold;
-  width:100%;
-  cursor:pointer;
-}
-
-/* MODAL */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.6);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  padding:15px;
-}
-
-.modal-content{
-  background:white;
-  padding:20px;
-  border-radius:20px;
-  width:100%;
-  max-width:400px;
-}
-
-.modal-content h3{
-  margin-bottom:10px;
-}
-
-input,select{
-  width:100%;
-  padding:10px;
-  margin-bottom:10px;
-  border-radius:10px;
-  border:1px solid #ff9800;
-}
-
-.hidden{
-  display:none;
-}
-
-.enviar-btn{
-  background:#25D366;
-  border:none;
-  padding:12px;
-  border-radius:30px;
-  color:white;
-  font-weight:bold;
-  width:100%;
-  cursor:pointer;
-}
-
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(10px);}
-  to{opacity:1;transform:translateY(0);}
-}
-</style>
 </head>
+<body><img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/UEFA_Champions_League_logo.svg/512px-UEFA_Champions_League_logo.svg.png"><h1>Champions League Caseira</h1><input id="timesInput" placeholder="Ex: Time A, Time B, Time C">
+<button onclick="gerarJogos()">Gerar Jogos</button><div id="jogos"></div><button onclick="calcular()">Calcular Tabela</button>
 
-<body>
+<table id="tabela">
+<thead>
+<tr>
+<th>Time</th>
+<th>Pts</th>
+<th>V</th>
+<th>E</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table><script>
+let times = [];
 
-<header>
-  <img src="file_0000000086d871f59519986fa6ae1178.png" class="logo">
-  <h1>🔥 Skinão Lanches 🔥</h1>
-</header>
+function gerarJogos() {
+  let input = document.getElementById("timesInput").value;
+  times = input.split(",").map(t => t.trim());
 
-<div class="categorias">
-  <button class="categoria-btn" onclick="mostrarCategoria('xis')">🌯 Xis</button>
-  <button class="categoria-btn" onclick="mostrarCategoria('porcoes')">🍟 Porções</button>
-  <button class="categoria-btn" onclick="mostrarCategoria('refrigerantes')">🥤 Refrigerantes</button>
-</div>
+  let div = document.getElementById("jogos");
+  div.innerHTML = "";
 
-<!-- XIS -->
-<div id="xis" class="produtos">
-<div class="grid">
-
-<div class="card">
-<img src="https://via.placeholder.com/300x200?text=Xis+Tradicional">
-<h3>Xis Tradicional</h3>
-<p>Carne, queijo, alface, tomate e molho</p>
-<div class="price">R$22</div>
-<button onclick="addItem('Xis Tradicional',22)">Adicionar</button>
-</div>
-
-<div class="card">
-<img src="https://via.placeholder.com/300x200?text=Xis+Bacon">
-<h3>Xis Bacon</h3>
-<p>Carne, queijo, bacon crocante</p>
-<div class="price">R$25</div>
-<button onclick="addItem('Xis Bacon',25)">Adicionar</button>
-</div>
-
-</div>
-</div>
-
-<!-- PORÇÕES -->
-<div id="porcoes" class="produtos">
-<div class="grid">
-
-<div class="card">
-<img src="https://via.placeholder.com/300x200?text=Batata+Frita">
-<h3>Batata Frita</h3>
-<p>Porção individual crocante</p>
-<div class="price">R$15</div>
-<button onclick="addItem('Batata Frita',15)">Adicionar</button>
-</div>
-
-<div class="card">
-<img src="https://via.placeholder.com/300x200?text=Calabresa">
-<h3>Calabresa Acebolada</h3>
-<p>Acompanha pão e molho</p>
-<div class="price">R$25</div>
-<button onclick="addItem('Calabresa Acebolada',25)">Adicionar</button>
-</div>
-
-</div>
-</div>
-
-<!-- REFRIGERANTES -->
-<div id="refrigerantes" class="produtos">
-<div class="grid">
-
-<div class="card">
-<img src="https://via.placeholder.com/300x200?text=Coca+2L">
-<h3>Coca-Cola 2L</h3>
-<div class="price">R$12</div>
-<button onclick="addItem('Coca 2L',12)">Adicionar</button>
-</div>
-
-<div class="card">
-<img src="https://via.placeholder.com/300x200?text=Guarana+2L">
-<h3>Guaraná 2L</h3>
-<div class="price">R$10</div>
-<button onclick="addItem('Guaraná 2L',10)">Adicionar</button>
-</div>
-
-</div>
-</div>
-
-<div class="carrinho">
-<h2>🛒 Carrinho</h2>
-<div id="lista"></div>
-<div class="total">Total: R$ <span id="total">0</span></div>
-<button class="finalizar-btn" onclick="abrirModal()">Finalizar Pedido</button>
-</div>
-
-<div class="modal" id="modal">
-<div class="modal-content">
-
-<h3>Finalizar Pedido</h3>
-
-<input type="text" id="nome" placeholder="Seu nome">
-
-<select id="tipo" onchange="verificarEntrega()">
-<option value="Retirada">Retirada</option>
-<option value="Local">Comer no local</option>
-<option value="Entrega">Entrega</option>
-</select>
-
-<div id="endereco" class="hidden">
-<input type="text" id="rua" placeholder="Rua">
-<input type="text" id="numero" placeholder="Número">
-<input type="text" id="bairro" placeholder="Bairro">
-<p style="font-size:12px;color:#777;">
-⚠ Taxa de entrega será informada no WhatsApp.
-</p>
-</div>
-
-<button class="enviar-btn" onclick="enviarPedido()">Enviar para WhatsApp</button>
-
-</div>
-</div>
-
-<script>
-const NUMERO_WHATSAPP="5555996698757";
-let carrinho=[];
-
-function mostrarCategoria(id){
-  document.querySelectorAll('.produtos').forEach(sec=>{
-    sec.style.display="none";
-  });
-  document.getElementById(id).style.display="block";
-}
-
-function addItem(nome,preco){
-  carrinho.push({nome,preco});
-  atualizar();
-}
-
-function atualizar(){
-  let lista=document.getElementById("lista");
-  let total=0;
-  lista.innerHTML="";
-  carrinho.forEach(item=>{
-    total+=item.preco;
-    lista.innerHTML+=item.nome+" - R$"+item.preco+"<br>";
-  });
-  document.getElementById("total").innerText=total;
-}
-
-function abrirModal(){
-  if(carrinho.length===0){
-    alert("Carrinho vazio!");
-    return;
-  }
-  document.getElementById("modal").style.display="flex";
-}
-
-function verificarEntrega(){
-  let tipo=document.getElementById("tipo").value;
-  document.getElementById("endereco")
-  .classList.toggle("hidden", tipo!=="Entrega");
-}
-
-function enviarPedido(){
-  let nome=document.getElementById("nome").value;
-  let tipo=document.getElementById("tipo").value;
-
-  if(!nome){
-    alert("Digite seu nome");
-    return;
-  }
-
-  let mensagem="🍔 Pedido - Lancheria NomeAqui\n\n";
-  mensagem+="Cliente: "+nome+"\n";
-  mensagem+="Tipo: "+tipo+"\n\n";
-
-  if(tipo==="Entrega"){
-    let rua=document.getElementById("rua").value;
-    let numero=document.getElementById("numero").value;
-    let bairro=document.getElementById("bairro").value;
-
-    if(!rua || !numero || !bairro){
-      alert("Preencha o endereço completo.");
-      return;
+  for (let i = 0; i < times.length; i++) {
+    for (let j = i + 1; j < times.length; j++) {
+      div.innerHTML += `
+        <div class="jogo">
+          <div class="time">${times[i]}</div>
+          <div class="placar">
+            <input type="number" min="0" id="g_${i}_${j}_1">
+            <span class="x">x</span>
+            <input type="number" min="0" id="g_${i}_${j}_2">
+          </div>
+          <div class="time">${times[j]}</div>
+        </div>
+      `;
     }
-
-    mensagem+="Endereço:\nRua: "+rua+"\nNúmero: "+numero+"\nBairro: "+bairro+"\n\n";
-    mensagem+="⚠ Taxa de entrega será informada no atendimento.\n\n";
   }
+}
 
-  let total=0;
-  carrinho.forEach(item=>{
-    mensagem+=item.nome+" - R$"+item.preco+"\n";
-    total+=item.preco;
+function calcular() {
+  let tabela = {};
+
+  times.forEach(t => {
+    tabela[t] = {pts:0, v:0, e:0, d:0};
   });
 
-  mensagem+="\nTotal (sem taxa): R$"+total;
+  for (let i = 0; i < times.length; i++) {
+    for (let j = i + 1; j < times.length; j++) {
+      let g1 = parseInt(document.getElementById(`g_${i}_${j}_1`).value);
+      let g2 = parseInt(document.getElementById(`g_${i}_${j}_2`).value);
 
-  let url=`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensagem)}`;
-  window.open(url,"_blank");
+      if (isNaN(g1) || isNaN(g2)) continue;
+
+      let t1 = times[i];
+      let t2 = times[j];
+
+      if (g1 > g2) {
+        tabela[t1].pts += 3;
+        tabela[t1].v++;
+        tabela[t2].d++;
+      } else if (g2 > g1) {
+        tabela[t2].pts += 3;
+        tabela[t2].v++;
+        tabela[t1].d++;
+      } else {
+        tabela[t1].pts += 1;
+        tabela[t2].pts += 1;
+        tabela[t1].e++;
+        tabela[t2].e++;
+      }
+    }
+  }
+
+  let lista = Object.keys(tabela).map(t => ({time:t, ...tabela[t]}));
+
+  lista.sort((a,b) => b.pts - a.pts);
+
+  let tbody = document.querySelector("#tabela tbody");
+  tbody.innerHTML = "";
+
+  lista.forEach((t, index) => {
+    let tr = document.createElement("tr");
+    if (index < 4) tr.classList.add("top");
+
+    tr.innerHTML = `
+      <td>${t.time}</td>
+      <td>${t.pts}</td>
+      <td>${t.v}</td>
+      <td>${t.e}</td>
+      <td>${t.d}</td>
+    `;
+
+    tbody.appendChild(tr);
+  });
 }
-</script>
-
-</body>
+</script></body>
 </html>
-
