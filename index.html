@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tabela Profissional</title>
 <style>
-body { font-family: Arial; background:#0b0f2a; color:white; margin:0; padding:10px; }h1 { text-align:center; font-size:18px; }
+body { font-family: Arial; background:#0b0f2a; color:white; margin:0; padding:10px; }h1 { text-align:center; font-size:28px; margin:15px 0 5px; font-weight:bold; letter-spacing:1px; background: linear-gradient(90deg, #3b82f6, #22c55e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
 input, button { width:95%; padding:10px; margin:5px auto; display:block; border-radius:8px; border:none; } button { background:#1e40af; color:white; }
 
@@ -22,7 +22,7 @@ input, button { width:95%; padding:10px; margin:5px auto; display:block; border-
 
 </style>
 </head>
-<body><h1>Uefa Quintals League</h1>
+<body><h1>🏆 UEFA QUINTALS LEAGUE</h1>
 <img src="Champions-League-com-novo-formato-comeca-hoje.-Confira-os-jogos.jpg" style="width:150px; display:block; margin:auto;"><input id="novoTime" placeholder="Digite um time">
 <button onclick="adicionarTime()">Adicionar Time</button><table id="tabela">
 <thead>
@@ -65,13 +65,48 @@ function adicionarTime() {
 
 function gerarJogos() {
   let div = document.getElementById("jogos");
-  div.innerHTML="";
+  div.innerHTML = "";
 
-  for (let i=0;i<times.length;i++){
-    for (let j=i+1;j<times.length;j++){
-      div.innerHTML+=`
-      <div class="jogo">
-        <div class="timejogo">${times[i]}</div>
+  if (times.length < 2) return;
+
+  // Método do círculo (round-robin) para evitar sequência repetida
+  let lista = [...times];
+  let isImpar = lista.length % 2 !== 0;
+  if (isImpar) lista.push("BYE");
+
+  const n = lista.length;
+  const rodadas = n - 1;
+  let arr = lista.slice();
+
+  for (let r = 0; r < rodadas; r++) {
+    div.innerHTML += `<h3 style="text-align:left;margin:10px 5px;color:#9ca3af;">Rodada ${r+1}</h3>`;
+
+    for (let i = 0; i < n / 2; i++) {
+      const t1 = arr[i];
+      const t2 = arr[n - 1 - i];
+
+      if (t1 !== "BYE" && t2 !== "BYE") {
+        // ids baseados na rodada para não conflitar
+        const id1 = `g_${r}_${i}_1`;
+        const id2 = `g_${r}_${i}_2`;
+
+        div.innerHTML += `
+        <div class="jogo">
+          <div class="timejogo">${t1}</div>
+          <div class="placar">
+            <input type="number" min="0" oninput="atualizar()" id="${id1}">
+            <span>x</span>
+            <input type="number" min="0" oninput="atualizar()" id="${id2}">
+          </div>
+          <div class="timejogo">${t2}</div>
+        </div>`;
+      }
+    }
+
+    // rotação (fixa o primeiro)
+    arr.splice(1, 0, arr.pop());
+  }
+}</div>
         <div class="placar">
           <input type="number" min="0" oninput="atualizar()" id="g_${i}_${j}_1">
           <span>x</span>
