@@ -4,58 +4,51 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Champions League Caseira</title>
 <style>
-body { font-family: Arial; background:#0b0f2a; color:white; text-align:center; margin:0; padding:10px; }.logo { width:120px; margin:10px auto; }
-
+body { font-family: Arial; background:#0b0f2a; color:white; text-align:center; margin:0; padding:10px; }
+.logo { width:110px; margin:10px auto; }
 h1 { font-size:18px; margin:5px 0; }
-
 input, button { padding:10px; border-radius:8px; border:none; font-size:14px; }
+button { width:95%; background:#1e40af; color:white; margin-top:5px; }/* TABELA */ table { width:100%; margin-top:10px; border-collapse:collapse; font-size:13px; background:#111827; border-radius:10px; overflow:hidden; } th, td { padding:8px; border-bottom:1px solid #334155; } th { background:#1e40af; } tr:nth-child(even) { background:#1e293b; } .top { background:#16a34a !important; font-weight:bold; }
 
-#timesInput { width:95%; }
-
-button { width:95%; background:#1e40af; color:white; margin-top:5px; }
-
-#jogos { margin-top:10px; }
-
-.jogo { display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:8px; margin:5px 0; border-radius:10px; gap:5px; }
-
-.time { flex:1; font-size:12px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-.placar { display:flex; align-items:center; gap:3px; }
-
-.placar input { width:40px; text-align:center; }
-
-.x { font-weight:bold; }
-
-table { width:100%; margin-top:10px; border-collapse:collapse; font-size:12px; }
-
-th, td { padding:6px; border:1px solid #334155; }
-
-th { background:#1e40af; }
-
-.top { background:#16a34a; font-weight:bold; } </style>
+/* JOGOS */ .jogo { display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:8px; margin:5px 0; border-radius:10px; } .time { flex:1; font-size:12px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .placar { display:flex; align-items:center; gap:3px; } .placar input { width:40px; text-align:center; } .x { font-weight:bold; } </style>
 
 </head>
-<body><img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/UEFA_Champions_League_logo.svg/512px-UEFA_Champions_League_logo.svg.png"><h1>Champions League Caseira</h1><input id="timesInput" placeholder="Ex: Time A, Time B, Time C">
-<button onclick="gerarJogos()">Gerar Jogos</button><div id="jogos"></div><button onclick="calcular()">Calcular Tabela</button>
-
+<body><img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/UEFA_Champions_League_logo.svg/512px-UEFA_Champions_League_logo.svg.png">
+<h1>Champions League Caseira</h1><input id="novoTime" placeholder="Digite um time">
+<button onclick="adicionarTime()">Adicionar Time</button><h2>Tabela</h2>
 <table id="tabela">
 <thead>
 <tr>
+<th>#</th>
 <th>Time</th>
 <th>Pts</th>
+<th>SG</th>
 <th>V</th>
 <th>E</th>
 <th>D</th>
 </tr>
 </thead>
 <tbody></tbody>
-</table><script>
+</table><h2>Jogos</h2>
+<div id="jogos"></div><script>
 let times = [];
+let tabela = {};
+
+function adicionarTime() {
+  let input = document.getElementById("novoTime");
+  let nome = input.value.trim();
+  if (!nome) return;
+
+  times.push(nome);
+  tabela[nome] = {pts:0, v:0, e:0, d:0, gp:0, gc:0};
+
+  input.value = "";
+
+  gerarJogos();
+  atualizarTabela();
+}
 
 function gerarJogos() {
-  let input = document.getElementById("timesInput").value;
-  times = input.split(",").map(t => t.trim());
-
   let div = document.getElementById("jogos");
   div.innerHTML = "";
 
@@ -65,9 +58,9 @@ function gerarJogos() {
         <div class="jogo">
           <div class="time">${times[i]}</div>
           <div class="placar">
-            <input type="number" min="0" id="g_${i}_${j}_1">
+            <input type="number" min="0" oninput="atualizarTudo()" id="g_${i}_${j}_1">
             <span class="x">x</span>
-            <input type="number" min="0" id="g_${i}_${j}_2">
+            <input type="number" min="0" oninput="atualizarTudo()" id="g_${i}_${j}_2">
           </div>
           <div class="time">${times[j]}</div>
         </div>
@@ -76,22 +69,26 @@ function gerarJogos() {
   }
 }
 
-function calcular() {
-  let tabela = {};
-
-  times.forEach(t => {
-    tabela[t] = {pts:0, v:0, e:0, d:0};
-  });
+function atualizarTudo() {
+  // reset
+  for (let t of times) {
+    tabela[t] = {pts:0, v:0, e:0, d:0, gp:0, gc:0};
+  }
 
   for (let i = 0; i < times.length; i++) {
     for (let j = i + 1; j < times.length; j++) {
-      let g1 = parseInt(document.getElementById(`g_${i}_${j}_1`).value);
-      let g2 = parseInt(document.getElementById(`g_${i}_${j}_2`).value);
+      let g1 = parseInt(document.getElementById(`g_${i}_${j}_1`)?.value);
+      let g2 = parseInt(document.getElementById(`g_${i}_${j}_2`)?.value);
 
       if (isNaN(g1) || isNaN(g2)) continue;
 
       let t1 = times[i];
       let t2 = times[j];
+
+      tabela[t1].gp += g1;
+      tabela[t1].gc += g2;
+      tabela[t2].gp += g2;
+      tabela[t2].gc += g1;
 
       if (g1 > g2) {
         tabela[t1].pts += 3;
@@ -110,9 +107,19 @@ function calcular() {
     }
   }
 
-  let lista = Object.keys(tabela).map(t => ({time:t, ...tabela[t]}));
+  atualizarTabela();
+}
 
-  lista.sort((a,b) => b.pts - a.pts);
+function atualizarTabela() {
+  let lista = Object.keys(tabela).map(t => {
+    return {
+      time: t,
+      ...tabela[t],
+      sg: tabela[t].gp - tabela[t].gc
+    }
+  });
+
+  lista.sort((a,b) => b.pts - a.pts || b.sg - a.sg);
 
   let tbody = document.querySelector("#tabela tbody");
   tbody.innerHTML = "";
@@ -122,8 +129,10 @@ function calcular() {
     if (index < 4) tr.classList.add("top");
 
     tr.innerHTML = `
+      <td>${index+1}°</td>
       <td>${t.time}</td>
       <td>${t.pts}</td>
+      <td>${t.sg}</td>
       <td>${t.v}</td>
       <td>${t.e}</td>
       <td>${t.d}</td>
