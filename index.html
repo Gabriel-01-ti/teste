@@ -123,6 +123,67 @@ function atualizar(){
     tabela[t]={pts:0,v:0,e:0,d:0,gp:0,gc:0,j:0};
   }
 
+  // percorre por rodadas
+  let inputs = document.querySelectorAll('.placar');
+
+  inputs.forEach((placar, index)=>{
+    let g1 = parseInt(placar.children[0].value);
+    let g2 = parseInt(placar.children[2].value);
+
+    if(isNaN(g1) || isNaN(g2)) return;
+
+    // descobrir times pelo DOM
+    let jogo = placar.parentElement;
+    let t1 = jogo.children[0].innerText;
+    let t2 = jogo.children[2].innerText;
+
+    tabela[t1].gp += g1; tabela[t1].gc += g2;
+    tabela[t2].gp += g2; tabela[t2].gc += g1;
+
+    tabela[t1].j++; tabela[t2].j++;
+
+    if(g1 > g2){
+      tabela[t1].pts += 3; tabela[t1].v++; tabela[t2].d++;
+    } else if(g2 > g1){
+      tabela[t2].pts += 3; tabela[t2].v++; tabela[t1].d++;
+    } else {
+      tabela[t1].pts += 1; tabela[t2].pts += 1;
+      tabela[t1].e++; tabela[t2].e++;
+    }
+  });
+
+  let lista = Object.keys(tabela).map(t => ({
+    time:t,
+    ...tabela[t],
+    sg:tabela[t].gp - tabela[t].gc
+  }));
+
+  lista.sort((a,b)=>b.pts-a.pts||b.sg-a.sg||b.gp-a.gp);
+
+  let tbody=document.querySelector("#tabela tbody");
+  tbody.innerHTML="";
+
+  lista.forEach((t,i)=>{
+    let tr=document.createElement("tr");
+    if(i<4) tr.classList.add("top");
+
+    tr.innerHTML=`
+      <td class="pos">${i+1}</td>
+      <td class="time">${t.time}</td>
+      <td class="num">${t.pts}</td>
+      <td class="num">${t.j}</td>
+      <td class="num">${t.v}</td>
+      <td class="num">${t.e}</td>
+      <td class="num">${t.d}</td>
+      <td class="num">${t.gp}</td>
+      <td class="num">${t.sg}</td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+};
+  }
+
   for (let i=0;i<times.length;i++){
     for (let j=i+1;j<times.length;j++){
       let g1=parseInt(document.getElementById(`g_${i}_${j}_1`)?.value);
