@@ -6,37 +6,24 @@
 <style>
 body { font-family: Arial; background:#0b0f2a; color:white; margin:0; padding:10px; }h1 { text-align:center; font-size:18px; }
 
-input, button { width:95%; padding:10px; margin:5px auto; display:block; border-radius:8px; border:none; }
+input, button { width:95%; padding:10px; margin:5px auto; display:block; border-radius:8px; border:none; } button { background:#1e40af; color:white; }
 
-button { background:#1e40af; color:white; }
+/* TABELA */ table { width:100%; border-collapse:collapse; margin-top:10px; font-size:13px; } th { text-align:left; padding:10px 6px; color:#9ca3af; font-weight:normal; } td { padding:10px 6px; border-top:1px solid #1f2937; } tr { background:#111827; }
 
-/* TABELA ESTILO GOOGLE/CHAMPIONS */ table { width:100%; border-collapse:collapse; margin-top:10px; font-size:13px; }
+.top { border-left:4px solid #3b82f6; } .pos { width:25px; text-align:center; color:#9ca3af; } .time { font-weight:bold; } .num { text-align:center; }
 
-th { text-align:left; padding:10px 6px; color:#9ca3af; font-weight:normal; }
+/* JOGOS (ARRUMADO) */ .jogo { display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; background:#1e293b; padding:10px; margin:6px 0; border-radius:10px; gap:8px; }
 
-td { padding:10px 6px; border-top:1px solid #1f2937; }
+.timejogo { font-size:13px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-tr { background:#111827; }
+.placar { display:flex; align-items:center; gap:5px; }
 
-/* destaque top 4 */ .top { border-left:4px solid #3b82f6; }
-
-.pos { width:25px; text-align:center; color:#9ca3af; }
-
-.time { font-weight:bold; }
-
-.num { text-align:center; }
-
-/* jogos */ .jogo { display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:8px; margin:5px 0; border-radius:10px; }
-
-.timejogo { flex:1; font-size:12px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-.placar input { width:40px; text-align:center; }
+.placar input { width:35px; height:35px; text-align:center; border-radius:6px; }
 
 </style>
 </head>
 <body><h1>Uefa Quintals League</h1>
-  <img src="Champions-League-com-novo-formato-comeca-hoje.-Confira-os-jogos.jpg" style="width:150px;">
-  <input id="novoTime" placeholder="Digite um time">
+<img src="Champions-League-com-novo-formato-comeca-hoje.-Confira-os-jogos.jpg" style="width:150px; display:block; margin:auto;"><input id="novoTime" placeholder="Digite um time">
 <button onclick="adicionarTime()">Adicionar Time</button><table id="tabela">
 <thead>
 <tr>
@@ -55,6 +42,13 @@ tr { background:#111827; }
 </table><div id="jogos"></div><script>
 let times = [];
 let tabela = {};
+
+// ENTER DO CELULAR FUNCIONANDO
+document.getElementById("novoTime").addEventListener("keypress", function(e){
+  if(e.key === "Enter"){
+    adicionarTime();
+  }
+});
 
 function adicionarTime() {
   let nome = document.getElementById("novoTime").value.trim();
@@ -80,7 +74,7 @@ function gerarJogos() {
         <div class="timejogo">${times[i]}</div>
         <div class="placar">
           <input type="number" min="0" oninput="atualizar()" id="g_${i}_${j}_1">
-          x
+          <span>x</span>
           <input type="number" min="0" oninput="atualizar()" id="g_${i}_${j}_2">
         </div>
         <div class="timejogo">${times[j]}</div>
