@@ -2,169 +2,147 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Champions League Caseira</title>
+<title>Tabela Profissional</title>
 <style>
-body { font-family: Arial; background:#0b0f2a; color:white; text-align:center; margin:0; padding:10px; }
-.logo { width:110px; margin:10px auto; }
-h1 { font-size:18px; margin:5px 0; }
-input, button { padding:10px; border-radius:8px; border:none; font-size:14px; }
-button { width:95%; background:#1e40af; color:white; margin-top:5px; }/* TABELA MAIS BONITA */ table { width:100%; margin-top:10px; border-collapse:collapse; font-size:13px; background:#0f172a; border-radius:12px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.4); }
+body { font-family: Arial; background:#0b0f2a; color:white; margin:0; padding:10px; }h1 { text-align:center; font-size:18px; }
 
-th { background:#1e40af; padding:10px; font-size:12px; letter-spacing:0.5px; }
+input, button { width:95%; padding:10px; margin:5px auto; display:block; border-radius:8px; border:none; }
 
-th.grupo { background:#1d4ed8; font-size:11px; }
+button { background:#1e40af; color:white; }
 
-th, td { border-bottom:1px solid #334155; }
+/* TABELA ESTILO GOOGLE/CHAMPIONS */ table { width:100%; border-collapse:collapse; margin-top:10px; font-size:13px; }
 
-tr:nth-child(even) { background:#111827; }
+th { text-align:left; padding:10px 6px; color:#9ca3af; font-weight:normal; }
 
-tr:hover { background:#1e293b; }
+td { padding:10px 6px; border-top:1px solid #1f2937; }
 
-td { padding:8px; }
+tr { background:#111827; }
 
-.pos { font-weight:bold; font-size:14px; }
+/* destaque top 4 */ .top { border-left:4px solid #3b82f6; }
 
-.top { background:linear-gradient(90deg,#16a34a,#22c55e); color:white; font-weight:bold; }
+.pos { width:25px; text-align:center; color:#9ca3af; }
 
-.divisor { border-left:2px solid #1e40af; }
+.time { font-weight:bold; }
 
-/* JOGOS */ .jogo { display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:8px; margin:5px 0; border-radius:10px; }
+.num { text-align:center; }
 
-.time { flex:1; font-size:12px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* jogos */ .jogo { display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:8px; margin:5px 0; border-radius:10px; }
 
-.placar { display:flex; align-items:center; gap:3px; }
+.timejogo { flex:1; font-size:12px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
 .placar input { width:40px; text-align:center; }
 
-.x { font-weight:bold; } </style>
-
+</style>
 </head>
-<body><img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/UEFA_Champions_League_logo.svg/512px-UEFA_Champions_League_logo.svg.png">
-<h1>Champions League Caseira</h1><input id="novoTime" placeholder="Digite um time">
-<button onclick="adicionarTime()">Adicionar Time</button><h2>Tabela</h2>
-<table id="tabela">
+<body><h1>Liga</h1><input id="novoTime" placeholder="Digite um time">
+<button onclick="adicionarTime()">Adicionar Time</button><table id="tabela">
 <thead>
 <tr>
-<th rowspan="2">Pos</th>
-<th rowspan="2">Time</th>
-<th colspan="2" class="grupo">Desempate</th>
-<th colspan="3" class="grupo">Campanha</th>
-</tr>
-<tr>
-<th>Pts</th>
-<th class="divisor">SG</th>
-<th>V</th>
-<th>E</th>
-<th>D</th>
+<th>Pos</th>
+<th>Clube</th>
+<th class="num">Pts</th>
+<th class="num">PJ</th>
+<th class="num">V</th>
+<th class="num">E</th>
+<th class="num">D</th>
+<th class="num">GM</th>
+<th class="num">SG</th>
 </tr>
 </thead>
 <tbody></tbody>
-</table><h2>Jogos</h2>
-<div id="jogos"></div><script>
+</table><div id="jogos"></div><script>
 let times = [];
 let tabela = {};
 
 function adicionarTime() {
-  let input = document.getElementById("novoTime");
-  let nome = input.value.trim();
+  let nome = document.getElementById("novoTime").value.trim();
   if (!nome) return;
 
   times.push(nome);
-  tabela[nome] = {pts:0, v:0, e:0, d:0, gp:0, gc:0};
+  tabela[nome] = {pts:0,v:0,e:0,d:0,gp:0,gc:0,j:0};
 
-  input.value = "";
+  document.getElementById("novoTime").value="";
 
   gerarJogos();
-  atualizarTabela();
+  atualizar();
 }
 
 function gerarJogos() {
   let div = document.getElementById("jogos");
-  div.innerHTML = "";
+  div.innerHTML="";
 
-  for (let i = 0; i < times.length; i++) {
-    for (let j = i + 1; j < times.length; j++) {
-      div.innerHTML += `
-        <div class="jogo">
-          <div class="time">${times[i]}</div>
-          <div class="placar">
-            <input type="number" min="0" oninput="atualizarTudo()" id="g_${i}_${j}_1">
-            <span class="x">x</span>
-            <input type="number" min="0" oninput="atualizarTudo()" id="g_${i}_${j}_2">
-          </div>
-          <div class="time">${times[j]}</div>
+  for (let i=0;i<times.length;i++){
+    for (let j=i+1;j<times.length;j++){
+      div.innerHTML+=`
+      <div class="jogo">
+        <div class="timejogo">${times[i]}</div>
+        <div class="placar">
+          <input type="number" min="0" oninput="atualizar()" id="g_${i}_${j}_1">
+          x
+          <input type="number" min="0" oninput="atualizar()" id="g_${i}_${j}_2">
         </div>
-      `;
+        <div class="timejogo">${times[j]}</div>
+      </div>`;
     }
   }
 }
 
-function atualizarTudo() {
-  for (let t of times) {
-    tabela[t] = {pts:0, v:0, e:0, d:0, gp:0, gc:0};
+function atualizar(){
+  for(let t of times){
+    tabela[t]={pts:0,v:0,e:0,d:0,gp:0,gc:0,j:0};
   }
 
-  for (let i = 0; i < times.length; i++) {
-    for (let j = i + 1; j < times.length; j++) {
-      let g1 = parseInt(document.getElementById(`g_${i}_${j}_1`)?.value);
-      let g2 = parseInt(document.getElementById(`g_${i}_${j}_2`)?.value);
+  for (let i=0;i<times.length;i++){
+    for (let j=i+1;j<times.length;j++){
+      let g1=parseInt(document.getElementById(`g_${i}_${j}_1`)?.value);
+      let g2=parseInt(document.getElementById(`g_${i}_${j}_2`)?.value);
 
-      if (isNaN(g1) || isNaN(g2)) continue;
+      if(isNaN(g1)||isNaN(g2)) continue;
 
-      let t1 = times[i];
-      let t2 = times[j];
+      let t1=times[i];
+      let t2=times[j];
 
-      tabela[t1].gp += g1;
-      tabela[t1].gc += g2;
-      tabela[t2].gp += g2;
-      tabela[t2].gc += g1;
+      tabela[t1].gp+=g1; tabela[t1].gc+=g2;
+      tabela[t2].gp+=g2; tabela[t2].gc+=g1;
 
-      if (g1 > g2) {
-        tabela[t1].pts += 3;
-        tabela[t1].v++;
-        tabela[t2].d++;
-      } else if (g2 > g1) {
-        tabela[t2].pts += 3;
-        tabela[t2].v++;
-        tabela[t1].d++;
-      } else {
-        tabela[t1].pts += 1;
-        tabela[t2].pts += 1;
-        tabela[t1].e++;
-        tabela[t2].e++;
+      tabela[t1].j++; tabela[t2].j++;
+
+      if(g1>g2){
+        tabela[t1].pts+=3; tabela[t1].v++; tabela[t2].d++;
+      }else if(g2>g1){
+        tabela[t2].pts+=3; tabela[t2].v++; tabela[t1].d++;
+      }else{
+        tabela[t1].pts+=1; tabela[t2].pts+=1;
+        tabela[t1].e++; tabela[t2].e++;
       }
     }
   }
 
-  atualizarTabela();
-}
+  let lista=Object.keys(tabela).map(t=>({
+    time:t,
+    ...tabela[t],
+    sg:tabela[t].gp-tabela[t].gc
+  }));
 
-function atualizarTabela() {
-  let lista = Object.keys(tabela).map(t => {
-    return {
-      time: t,
-      ...tabela[t],
-      sg: tabela[t].gp - tabela[t].gc
-    }
-  });
+  lista.sort((a,b)=>b.pts-a.pts||b.sg-a.sg||b.gp-a.gp);
 
-  lista.sort((a,b) => b.pts - a.pts || b.sg - a.sg);
+  let tbody=document.querySelector("#tabela tbody");
+  tbody.innerHTML="";
 
-  let tbody = document.querySelector("#tabela tbody");
-  tbody.innerHTML = "";
+  lista.forEach((t,i)=>{
+    let tr=document.createElement("tr");
+    if(i<4) tr.classList.add("top");
 
-  lista.forEach((t, index) => {
-    let tr = document.createElement("tr");
-    if (index < 4) tr.classList.add("top");
-
-    tr.innerHTML = `
-      <td class="pos">${index+1}°</td>
-      <td>${t.time}</td>
-      <td>${t.pts}</td>
-      <td class="divisor">${t.sg}</td>
-      <td>${t.v}</td>
-      <td>${t.e}</td>
-      <td>${t.d}</td>
+    tr.innerHTML=`
+      <td class="pos">${i+1}</td>
+      <td class="time">${t.time}</td>
+      <td class="num">${t.pts}</td>
+      <td class="num">${t.j}</td>
+      <td class="num">${t.v}</td>
+      <td class="num">${t.e}</td>
+      <td class="num">${t.d}</td>
+      <td class="num">${t.gp}</td>
+      <td class="num">${t.sg}</td>
     `;
 
     tbody.appendChild(tr);
