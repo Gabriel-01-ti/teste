@@ -8,9 +8,35 @@ body { font-family: Arial; background:#0b0f2a; color:white; text-align:center; m
 .logo { width:110px; margin:10px auto; }
 h1 { font-size:18px; margin:5px 0; }
 input, button { padding:10px; border-radius:8px; border:none; font-size:14px; }
-button { width:95%; background:#1e40af; color:white; margin-top:5px; }/* TABELA */ table { width:100%; margin-top:10px; border-collapse:collapse; font-size:13px; background:#111827; border-radius:10px; overflow:hidden; } th, td { padding:8px; border-bottom:1px solid #334155; } th { background:#1e40af; } tr:nth-child(even) { background:#1e293b; } .top { background:#16a34a !important; font-weight:bold; }
+button { width:95%; background:#1e40af; color:white; margin-top:5px; }/* TABELA MAIS BONITA */ table { width:100%; margin-top:10px; border-collapse:collapse; font-size:13px; background:#0f172a; border-radius:12px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.4); }
 
-/* JOGOS */ .jogo { display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:8px; margin:5px 0; border-radius:10px; } .time { flex:1; font-size:12px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .placar { display:flex; align-items:center; gap:3px; } .placar input { width:40px; text-align:center; } .x { font-weight:bold; } </style>
+th { background:#1e40af; padding:10px; font-size:12px; letter-spacing:0.5px; }
+
+th.grupo { background:#1d4ed8; font-size:11px; }
+
+th, td { border-bottom:1px solid #334155; }
+
+tr:nth-child(even) { background:#111827; }
+
+tr:hover { background:#1e293b; }
+
+td { padding:8px; }
+
+.pos { font-weight:bold; font-size:14px; }
+
+.top { background:linear-gradient(90deg,#16a34a,#22c55e); color:white; font-weight:bold; }
+
+.divisor { border-left:2px solid #1e40af; }
+
+/* JOGOS */ .jogo { display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:8px; margin:5px 0; border-radius:10px; }
+
+.time { flex:1; font-size:12px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+.placar { display:flex; align-items:center; gap:3px; }
+
+.placar input { width:40px; text-align:center; }
+
+.x { font-weight:bold; } </style>
 
 </head>
 <body><img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/UEFA_Champions_League_logo.svg/512px-UEFA_Champions_League_logo.svg.png">
@@ -19,10 +45,14 @@ button { width:95%; background:#1e40af; color:white; margin-top:5px; }/* TABELA 
 <table id="tabela">
 <thead>
 <tr>
-<th>#</th>
-<th>Time</th>
+<th rowspan="2">#</th>
+<th rowspan="2">Time</th>
+<th colspan="2" class="grupo">Desempate</th>
+<th colspan="3" class="grupo">Campanha</th>
+</tr>
+<tr>
 <th>Pts</th>
-<th>SG</th>
+<th class="divisor">SG</th>
 <th>V</th>
 <th>E</th>
 <th>D</th>
@@ -70,7 +100,6 @@ function gerarJogos() {
 }
 
 function atualizarTudo() {
-  // reset
   for (let t of times) {
     tabela[t] = {pts:0, v:0, e:0, d:0, gp:0, gc:0};
   }
@@ -129,10 +158,10 @@ function atualizarTabela() {
     if (index < 4) tr.classList.add("top");
 
     tr.innerHTML = `
-      <td>${index+1}°</td>
+      <td class="pos">${index+1}°</td>
       <td>${t.time}</td>
       <td>${t.pts}</td>
-      <td>${t.sg}</td>
+      <td class="divisor">${t.sg}</td>
       <td>${t.v}</td>
       <td>${t.e}</td>
       <td>${t.d}</td>
