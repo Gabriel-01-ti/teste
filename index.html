@@ -211,27 +211,37 @@ function calcularSemis(){
  ["semi1","semi2"].forEach(id=>{
   let jogos=document.querySelectorAll(`[data-duelo='${id}']`);
 
-  let t1=jogos[0].children[0].innerText;
-  let t2=jogos[0].children[2].innerText;
+  let t1 = jogos[0].children[0].innerText;
+  let t2 = jogos[0].children[2].innerText;
 
-  let g1=0,g2=0;
+  let total1 = 0;
+  let total2 = 0;
 
   jogos.forEach(j=>{
-    let a=parseInt(j.children[1].children[0].value);
-    let b=parseInt(j.children[1].children[2].value);
-    if(!isNaN(a)&&!isNaN(b)){
-      g1+=a;
-      g2+=b;
+    let casa = j.children[0].innerText;
+    let fora = j.children[2].innerText;
+
+    let gCasa = parseInt(j.children[1].children[0].value);
+    let gFora = parseInt(j.children[1].children[2].value);
+
+    if(isNaN(gCasa) || isNaN(gFora)) return;
+
+    if(casa === t1){
+      total1 += gCasa;
+      total2 += gFora;
+    } else {
+      total1 += gFora;
+      total2 += gCasa;
     }
   });
 
-  if(g1>g2) vencedores.push(t1);
-  else if(g2>g1) vencedores.push(t2);
+  if(total1 > total2) vencedores.push(t1);
+  else if(total2 > total1) vencedores.push(t2);
  });
 
- if(vencedores.length===2){
+ if(vencedores.length === 2){
   let f=document.getElementById("finalArea");
-  f.innerHTML=criarDuelo(vencedores[0],vencedores[1],"final",true);
+  f.innerHTML = criarDuelo(vencedores[0], vencedores[1], "final", true);
  }
 }
 
