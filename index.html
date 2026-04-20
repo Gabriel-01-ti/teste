@@ -36,7 +36,36 @@ gap:8px;
 .time { text-align:center; font-size:13px; }
 .placar { display:flex; gap:5px; align-items:center; }
 .placar input { width:40px; height:35px; text-align:center; }
+/* CHAVE ESTILO CHAMPIONS */
+.chave {
+  display:flex;
+  justify-content:space-between;
+  margin-top:20px;
+  gap:10px;
+}
 
+.coluna {
+  flex:1;
+}
+
+.coluna h3 {
+  text-align:center;
+  color:#9ca3af;
+}
+
+.duelo {
+  background:#0f172a;
+  padding:10px;
+  border-radius:12px;
+  margin-bottom:15px;
+  box-shadow:0 0 10px rgba(0,0,0,0.4);
+}
+
+.final {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
 </style>
 </head>
 <body>
@@ -196,14 +225,27 @@ function finalizarLiga(){
  let m=document.getElementById("mata");
  let a=window.classificados;
 
- m.innerHTML="<h3>Semifinais</h3>";
+ m.innerHTML=`
+ <div class="chave">
 
- m.innerHTML+=criarDuelo(a[0].time,a[3].time,"semi1");
- m.innerHTML+=criarDuelo(a[1].time,a[2].time,"semi2");
+   <div class="coluna">
+     <h3>Semifinais</h3>
+     <div class="duelo">
+       ${criarDuelo(a[0].time,a[3].time,"semi1")}
+     </div>
+     <div class="duelo">
+       ${criarDuelo(a[1].time,a[2].time,"semi2")}
+     </div>
+   </div>
 
- m.innerHTML+=`<h3>Final (Ida e Volta)</h3>
- <div id="finalArea"></div>
- <h2 id="campeao" style="text-align:center;margin-top:15px;"></h2>`;
+   <div class="coluna final">
+     <h3>Final</h3>
+     <div id="finalArea"></div>
+     <h2 id="campeao" style="text-align:center;margin-top:15px;"></h2>
+   </div>
+
+ </div>
+ `;
 }
 
 function calcularSemis(){
@@ -298,7 +340,7 @@ function criarDuelo(t1,t2,id,final=false){
  </div>
  `;
 }
-  function forcarFinal(){
+ function forcarFinal(){
  let vencedores=[];
 
  ["semi1","semi2"].forEach(id=>{
@@ -334,11 +376,16 @@ function criarDuelo(t1,t2,id,final=false){
 
  if(vencedores.length === 2){
   let f=document.getElementById("finalArea");
-  f.innerHTML = criarDuelo(vencedores[0], vencedores[1], "final", true);
+
+  f.innerHTML = `
+    <div class="duelo">
+      ${criarDuelo(vencedores[0], vencedores[1], "final", true)}
+    </div>
+  `;
  } else {
   alert("Preencha corretamente os placares das semifinais");
  }
-  }
+}
 </script>
 
 </body>
