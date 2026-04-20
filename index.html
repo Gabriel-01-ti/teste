@@ -253,6 +253,7 @@ function calcularSemis(){
 
  ["semi1","semi2"].forEach(id=>{
   let jogos=document.querySelectorAll(`[data-duelo='${id}']`);
+  if(jogos.length < 2) return;
 
   let t1 = jogos[0].children[0].innerText;
   let t2 = jogos[0].children[2].innerText;
@@ -262,12 +263,13 @@ function calcularSemis(){
 
   jogos.forEach(j=>{
     let casa = j.children[0].innerText;
-    let fora = j.children[2].innerText;
 
     let gCasa = parseInt(j.children[1].children[0].value);
     let gFora = parseInt(j.children[1].children[2].value);
 
-    if(isNaN(gCasa) || isNaN(gFora)) return;
+    // 🔥 CORREÇÃO AQUI
+    if(isNaN(gCasa)) gCasa = 0;
+    if(isNaN(gFora)) gFora = 0;
 
     if(casa === t1){
       total1 += gCasa;
@@ -282,9 +284,15 @@ function calcularSemis(){
   else if(total2 > total1) vencedores.push(t2);
  });
 
+ // 🔥 CRIA FINAL AUTOMATICAMENTE
  if(vencedores.length === 2){
   let f=document.getElementById("finalArea");
-  f.innerHTML = criarDuelo(vencedores[0], vencedores[1], "final", true);
+
+  f.innerHTML = `
+    <div class="duelo">
+      ${criarDuelo(vencedores[0], vencedores[1], "final", true)}
+    </div>
+  `;
  }
 }
 
