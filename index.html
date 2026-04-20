@@ -80,7 +80,6 @@ gap:8px;
 <input id="novoTime" placeholder="Digite um time">
 <button onclick="adicionarTime()">Adicionar Time</button>
 <button onclick="finalizarLiga()">Finalizar Liga</button>
-<button onclick="forcarFinal()">Finalizar Semis</button>
 
 <table id="tabela">
 <thead>
@@ -96,6 +95,10 @@ gap:8px;
 
 <h2>Mata-mata</h2>
 <div id="mata"></div>
+  
+<button onclick="forcarFinal()" style="margin-top:10px; background:#22c55e;">
+Finalizar Semifinais
+</button>
 
 </div>
 
@@ -330,6 +333,71 @@ function criarDuelo(t1,t2,id,final=false){
  `;
 }
 
-function forcarFinal(){ calcularSemis(); }
+function forcarFinal(){
+ let vencedores=[];
+
+ ["semi1","semi2"].forEach(id=>{
+  let jogos=document.querySelectorAll(`[data-duelo='${id}']`);
+  
+  if(jogos.length < 2){
+    alert("Erro nas semifinais");
+    return;
+  }
+
+  let t1 = jogos[0].children[0].innerText;
+  let t2 = jogos[0].children[2].innerText;
+
+  let total1 = 0;
+  let total2 = 0;
+  let preenchidos = 0;
+
+  jogos.forEach(j=>{
+    let casa = j.children[0].innerText;
+
+    let gCasa = parseInt(j.children[1].children[0].value);
+    let gFora = parseInt(j.children[1].children[2].value);
+
+    if(isNaN(gCasa) || isNaN(gFora)) return;
+
+    preenchidos++;
+
+    if(casa === t1){
+      total1 += gCasa;
+      total2 += gFora;
+    } else {
+      total1 += gFora;
+      total2 += gCasa;
+    }
+  });
+
+  // ❌ Se não preencheu os 2 jogos → erro
+  if(preenchidos < 2){
+    alert("Preencha TODOS os jogos das semifinais!");
+    vencedores = [];
+    return;
+  }
+
+  // ❌ EMPATE (causa do bug silencioso)
+  if(total1 === total2){
+    alert(`Empate entre ${t1} e ${t2}! Defina um vencedor.`);
+    vencedores = [];
+    return;
+  }
+
+  if(total1 > total2) vencedores.push(t1);
+  else vencedores.push(t2);
+ });
+
+ // ✅ Só cria final se tiver 2 vencedores
+ if(vencedores.length === 2){
+  let f=document.getElementById("finalArea");
+
+  f.innerHTML = `
+    <div class="duelo">
+      ${criarDuelo(vencedores[0], vencedores[1], "final", true)}
+    </div>
+  `;
+ }
+}
 
 </script></body></html>
