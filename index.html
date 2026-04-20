@@ -287,26 +287,42 @@ function calcularSemis(){
  }
 }
 
-function verCampeao(){
- let jogos=document.querySelectorAll("[data-duelo='final']");
- if(jogos.length<2) return;
+function verCampeao() {
+  let jogos = document.querySelectorAll("[data-duelo='final']");
+  let t1 = jogos[0].querySelector('.time:first-child').innerText;
+  let t2 = jogos[0].querySelector('.time:last-child').innerText;
+  let g1 = 0, g2 = 0;
 
- let t1=jogos[0].children[0].innerText;
- let t2=jogos[0].children[2].innerText;
+  jogos.forEach(j => {
+    let inputs = j.querySelectorAll('input');
+    let a = parseInt(inputs[0].value), b = parseInt(inputs[1].value);
+    if (!isNaN(a) && !isNaN(b)) {
+      if (j.querySelector('.time:first-child').innerText === t1) { g1 += a; g2 += b; }
+      else { g1 += b; g2 += a; }
+    }
+  });
 
- let g1=0,g2=0;
-
- jogos.forEach(j=>{
-  let a=parseInt(j.children[1].children[0].value);
-  let b=parseInt(j.children[1].children[2].value);
-  if(!isNaN(a)&&!isNaN(b)){ g1+=a; g2+=b; }
- });
-
- let c=document.getElementById("campeao");
-
- if(g1>g2) c.innerHTML=`🏆 ${t1}`;
- else if(g2>g1) c.innerHTML=`🏆 ${t2}`;
- else c.innerHTML="Empate";
+  const c = document.getElementById("campeao");
+  
+  if (g1 === g2) {
+    if (!document.getElementById("penaltis-box")) {
+      alert("Final empatada! Decisão por pênaltis.");
+      criarCampoPenaltis(t1, t2, "finalArea", "verCampeao()");
+    } else {
+      let p1 = parseInt(document.getElementById("pen-1").value);
+      let p2 = parseInt(document.getElementById("pen-2").value);
+      if (isNaN(p1) || isNaN(p2)) return alert("Preencha os pênaltis!");
+      if (p1 === p2) return alert("Pênaltis empatados? Continue batendo!");
+      
+      c.innerHTML = `🏆 CAMPEÃO: ${p1 > p2 ? t1 : t2} (nos pênaltis)`;
+      document.getElementById("btnVerCampeao").style.display = 'none';
+      document.getElementById("penaltis-box").remove();
+    }
+  } else {
+    c.innerHTML = `🏆 CAMPEÃO: ${g1 > g2 ? t1 : t2}`;
+    document.getElementById("btnVerCampeao").style.display = 'none';
+    if(document.getElementById("penaltis-box")) document.getElementById("penaltis-box").remove();
+  }
 }
 
 function criarDuelo(t1, t2, id, final = false) {
@@ -343,57 +359,71 @@ function forcarFinal() {
 
   for (let id of IDs) {
     let jogos = document.querySelectorAll(`[data-duelo='${id}']`);
-    
-    if (jogos.length < 2) {
-      alert("Gere as semifinais primeiro clicando em 'Finalizar Liga'!");
-      return;
-    }
+    if (jogos.length < 2) return alert("Gere a liga primeiro!");
 
     let t1 = jogos[0].querySelector('.time:first-child').innerText;
     let t2 = jogos[0].querySelector('.time:last-child').innerText;
-
-    let totalT1 = 0;
-    let totalT2 = 0;
-    let preenchidos = 0;
+    let total1 = 0, total2 = 0, preenchidos = 0;
 
     jogos.forEach(j => {
       let inputs = j.querySelectorAll('input');
-      let g1 = parseInt(inputs[0].value);
-      let g2 = parseInt(inputs[1].value);
-
+      let g1 = parseInt(inputs[0].value), g2 = parseInt(inputs[1].value);
       if (!isNaN(g1) && !isNaN(g2)) {
         preenchidos++;
-        // Verifica quem é quem no layout para somar corretamente
-        if (j.querySelector('.time:first-child').innerText === t1) {
-          totalT1 += g1;
-          totalT2 += g2;
-        } else {
-          totalT1 += g2;
-          totalT2 += g1;
-        }
+        if (j.querySelector('.time:first-child').innerText === t1) { total1 += g1; total2 += g2; }
+        else { total1 += g2; total2 += g1; }
       }
     });
 
-    if (preenchidos < 2) {
-      alert("Preencha os dois jogos de cada semifinal!");
-      return;
-    }
+    if (preenchidos < 2) return alert("Preencha todos os jogos das semis!");
 
-    if (totalT1 === totalT2) {
-      alert(`Empate no agregado entre ${t1} e ${t2}! Altere um placar.`);
-      return;
+    if (total1 === total2) {
+      alert(`Empate em ${t1} x ${t2}! Resolva nos pênaltis.`);
+      // Se já houver caixa de pênalti, não duplica
+      if (!document.getElementById("penaltis-box")) {
+        criarCampoPenaltis(t1, t2, "mata", "forcarFinal()"); 
+      } else {
+        let p1 = parseInt(document.getElementById("pen-1").value);
+        let p2 = parseInt(document.getElementById("pen-2").value);
+        if (isNaN(p1) || isNaN(p2)) return alert("Preencha os gols dos pênaltis!");
+        if (p1 === p2) return alert("Os pênaltis não podem terminar empatados!");
+        vencedores.push(p1 > p2 ? t1 : t2);
+        document.getElementById("penaltis-box").remove();
+      }
+    } else {
+      vencedores.push(total1 > total2 ? t1 : t2);
     }
-
-    vencedores.push(totalT1 > totalT2 ? t1 : t2);
   }
 
   if (vencedores.length === 2) {
-    const area = document.getElementById("finalArea");
-    area.innerHTML = `<div class="duelo">${criarDuelo(vencedores[0], vencedores[1], "final", true)}</div>`;
-    // Scroll suave até a final
-    area.scrollIntoView({ behavior: 'smooth' });
+    // Esconde o botão de finalizar semis
+    event.target.style.display = 'none';
+    
+    // Cria a final
+    document.getElementById("finalArea").innerHTML = `
+      <div class="duelo">${criarDuelo(vencedores[0], vencedores[1], "final", true)}</div>
+      <button id="btnVerCampeao" onclick="verCampeao()" style="background:#22c55e; margin-top:10px;">Ver Campeão</button>
+    `;
   }
 }
-
+  
+  
+function criarCampoPenaltis(t1, t2, destinoId, callback) {
+  const container = document.getElementById(destinoId);
+  container.innerHTML += `
+    <div id="penaltis-box" style="margin-top:10px; padding:10px; border:1px dashed #fbbf24; border-radius:10px; background: rgba(251, 191, 36, 0.1);">
+      <p style="color:#fbbf24; font-weight:bold; margin:0 0 10px 0;">PÊNALTIS</p>
+      <div class="placar">
+        <span>${t1}</span>
+        <input type="number" id="pen-1" placeholder="Gols" style="width:60px">
+        <span>x</span>
+        <input type="number" id="pen-2" placeholder="Gols" style="width:60px">
+        <span>${t2}</span>
+      </div>
+      <button onclick="${callback}" style="background:#fbbf24; margin-top:10px;">Confirmar Pênaltis</button>
+    </div>
+  `;
+}
+  
 
 </script></body></html>
