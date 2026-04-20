@@ -309,95 +309,91 @@ function verCampeao(){
  else c.innerHTML="Empate";
 }
 
-function criarDuelo(t1,t2,id,final=false){
- return `
- <p><b>${t1} x ${t2}</b></p>
- <div class="jogo" data-duelo="${id}">
-   <div class="time">${t1}</div>
-   <div class="placar">
-     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}"> x
-     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}">
-   </div>
-   <div class="time">${t2}</div>
- </div>
-
- <p><b>${t2} x ${t1}</b></p>
- <div class="jogo" data-duelo="${id}">
-   <div class="time">${t2}</div>
-   <div class="placar">
-     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}"> x
-     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}">
-   </div>
-   <div class="time">${t1}</div>
- </div>
- `;
-}
-
-function forcarFinal(){
- let vencedores=[];
-
- ["semi1","semi2"].forEach(id=>{
-  let jogos=document.querySelectorAll(`[data-duelo='${id}']`);
+function criarDuelo(t1, t2, id, final = false) {
+  // Define qual função chamar ao digitar o placar
+  const func = final ? "verCampeao()" : "void(0)"; 
   
-  if(jogos.length < 2){
-    alert("Erro nas semifinais");
-    return;
-  }
-
-  let t1 = jogos[0].children[0].innerText;
-  let t2 = jogos[0].children[2].innerText;
-
-  let total1 = 0;
-  let total2 = 0;
-  let preenchidos = 0;
-
-  jogos.forEach(j=>{
-    let casa = j.children[0].innerText;
-
-    let gCasa = parseInt(j.children[1].children[0].value);
-    let gFora = parseInt(j.children[1].children[2].value);
-
-    if(isNaN(gCasa) || isNaN(gFora)) return;
-
-    preenchidos++;
-
-    if(casa === t1){
-      total1 += gCasa;
-      total2 += gFora;
-    } else {
-      total1 += gFora;
-      total2 += gCasa;
-    }
-  });
-
-  // ❌ Se não preencheu os 2 jogos → erro
-  if(preenchidos < 2){
-    alert("Preencha TODOS os jogos das semifinais!");
-    vencedores = [];
-    return;
-  }
-
-  // ❌ EMPATE (causa do bug silencioso)
-  if(total1 === total2){
-    alert(`Empate entre ${t1} e ${t2}! Defina um vencedor.`);
-    vencedores = [];
-    return;
-  }
-
-  if(total1 > total2) vencedores.push(t1);
-  else vencedores.push(t2);
- });
-
- // ✅ Só cria final se tiver 2 vencedores
- if(vencedores.length === 2){
-  let f=document.getElementById("finalArea");
-
-  f.innerHTML = `
-    <div class="duelo">
-      ${criarDuelo(vencedores[0], vencedores[1], "final", true)}
+  return `
+  <p><b>Ida: ${t1} x ${t2}</b></p>
+  <div class="jogo" data-duelo="${id}">
+    <div class="time">${t1}</div>
+    <div class="placar">
+      <input type="number" oninput="${func}"> x
+      <input type="number" oninput="${func}">
     </div>
+    <div class="time">${t2}</div>
+  </div>
+
+  <p><b>Volta: ${t2} x ${t1}</b></p>
+  <div class="jogo" data-duelo="${id}">
+    <div class="time">${t2}</div>
+    <div class="placar">
+      <input type="number" oninput="${func}"> x
+      <input type="number" oninput="${func}">
+    </div>
+    <div class="time">${t1}</div>
+  </div>
   `;
- }
 }
+
+
+function forcarFinal() {
+  let vencedores = [];
+  const IDs = ["semi1", "semi2"];
+
+  for (let id of IDs) {
+    let jogos = document.querySelectorAll(`[data-duelo='${id}']`);
+    
+    if (jogos.length < 2) {
+      alert("Gere as semifinais primeiro clicando em 'Finalizar Liga'!");
+      return;
+    }
+
+    let t1 = jogos[0].querySelector('.time:first-child').innerText;
+    let t2 = jogos[0].querySelector('.time:last-child').innerText;
+
+    let totalT1 = 0;
+    let totalT2 = 0;
+    let preenchidos = 0;
+
+    jogos.forEach(j => {
+      let inputs = j.querySelectorAll('input');
+      let g1 = parseInt(inputs[0].value);
+      let g2 = parseInt(inputs[1].value);
+
+      if (!isNaN(g1) && !isNaN(g2)) {
+        preenchidos++;
+        // Verifica quem é quem no layout para somar corretamente
+        if (j.querySelector('.time:first-child').innerText === t1) {
+          totalT1 += g1;
+          totalT2 += g2;
+        } else {
+          totalT1 += g2;
+          totalT2 += g1;
+        }
+      }
+    });
+
+    if (preenchidos < 2) {
+      alert("Preencha os dois jogos de cada semifinal!");
+      return;
+    }
+
+    if (totalT1 === totalT2) {
+      alert(`Empate no agregado entre ${t1} e ${t2}! Altere um placar.`);
+      return;
+    }
+
+    vencedores.push(totalT1 > totalT2 ? t1 : t2);
+  }
+
+  if (vencedores.length === 2) {
+    const area = document.getElementById("finalArea");
+    area.innerHTML = `<div class="duelo">${criarDuelo(vencedores[0], vencedores[1], "final", true)}</div>`;
+    // Scroll suave até a final
+    area.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
 
 </script></body></html>
