@@ -51,6 +51,7 @@ gap:8px;
 <input id="novoTime" placeholder="Digite um time">
 <button onclick="adicionarTime()">Adicionar Time</button>
 <button onclick="finalizarLiga()">Finalizar Liga</button>
+<button onclick="forcarFinal()">Finalizar Semis</button>
 
 <table id="tabela">
 <thead>
@@ -297,6 +298,47 @@ function criarDuelo(t1,t2,id,final=false){
  </div>
  `;
 }
+  function forcarFinal(){
+ let vencedores=[];
+
+ ["semi1","semi2"].forEach(id=>{
+  let jogos=document.querySelectorAll(`[data-duelo='${id}']`);
+  if(jogos.length < 2) return;
+
+  let t1 = jogos[0].children[0].innerText;
+  let t2 = jogos[0].children[2].innerText;
+
+  let total1 = 0;
+  let total2 = 0;
+
+  jogos.forEach(j=>{
+    let casa = j.children[0].innerText;
+
+    let gCasa = parseInt(j.children[1].children[0].value);
+    let gFora = parseInt(j.children[1].children[2].value);
+
+    if(isNaN(gCasa) || isNaN(gFora)) return;
+
+    if(casa === t1){
+      total1 += gCasa;
+      total2 += gFora;
+    } else {
+      total1 += gFora;
+      total2 += gCasa;
+    }
+  });
+
+  if(total1 > total2) vencedores.push(t1);
+  else if(total2 > total1) vencedores.push(t2);
+ });
+
+ if(vencedores.length === 2){
+  let f=document.getElementById("finalArea");
+  f.innerHTML = criarDuelo(vencedores[0], vencedores[1], "final", true);
+ } else {
+  alert("Preencha corretamente os placares das semifinais");
+ }
+  }
 </script>
 
 </body>
