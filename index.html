@@ -4,33 +4,72 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quintals League</title>
 <style>
-body { font-family: Arial; background:#0b0f2a; color:white; margin:0; }header { background: linear-gradient(135deg,#0f172a,#1e3a8a); text-align:center; padding:20px 10px; } header h1 { margin:0; font-size:26px; letter-spacing:2px; background: linear-gradient(90deg,#3b82f6,#22c55e); -webkit-background-clip:text; -webkit-text-fill-color:transparent; } header img { width:120px; margin-top:10px; border-radius:10px; }
+body { font-family: Arial; background:#0b0f2a; color:white; margin:0; }
+header { background: linear-gradient(135deg,#0f172a,#1e3a8a); text-align:center; padding:20px 10px; }
+header h1 { margin:0; font-size:26px; letter-spacing:2px; background: linear-gradient(90deg,#3b82f6,#22c55e); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+header img { width:120px; margin-top:10px; border-radius:10px; }
 
 .container { padding:10px; }
 
-input, button { width:100%; padding:14px; margin:6px 0; border-radius:10px; border:none; } button { background:#2563eb; color:white; font-weight:bold; }
+input, button { width:100%; padding:14px; margin:6px 0; border-radius:10px; border:none; }
+button { background:#2563eb; color:white; font-weight:bold; }
 
-/* tabela */ table { width:100%; border-collapse:collapse; margin-top:10px; } th, td { padding:8px; border-top:1px solid #1f2937; } th { color:#9ca3af; } tr { background:#111827; } .top { border-left:4px solid #3b82f6; } .num { text-align:center; }
+/* tabela */
+table { width:100%; border-collapse:collapse; margin-top:10px; }
+th, td { padding:8px; border-top:1px solid #1f2937; }
+th { color:#9ca3af; }
+tr { background:#111827; }
+.top { border-left:4px solid #3b82f6; }
+.num { text-align:center; }
 
-/* jogos arrumado */ .jogo { display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; background:#1e293b; padding:10px; margin:6px 0; border-radius:10px; gap:8px; } .time { text-align:center; font-size:13px; } .placar { display:flex; gap:5px; align-items:center; } .placar input { width:40px; height:35px; text-align:center; }
+/* jogos */
+.jogo {
+display:grid;
+grid-template-columns: 1fr auto 1fr;
+align-items:center;
+background:#1e293b;
+padding:10px;
+margin:6px 0;
+border-radius:10px;
+gap:8px;
+}
+.time { text-align:center; font-size:13px; }
+.placar { display:flex; gap:5px; align-items:center; }
+.placar input { width:40px; height:35px; text-align:center; }
 
 </style>
 </head>
-<body><header>
+<body>
+
+<header>
   <h1>🏆 UEFA QUINTALS LEAGUE</h1>
   <img src="Champions-League-com-novo-formato-comeca-hoje.-Confira-os-jogos.jpg">
-</header><div class="container"><input id="novoTime" placeholder="Digite um time">
+</header>
+
+<div class="container">
+
+<input id="novoTime" placeholder="Digite um time">
 <button onclick="adicionarTime()">Adicionar Time</button>
-<button onclick="finalizarLiga()">Finalizar Liga</button><table id="tabela">
+<button onclick="finalizarLiga()">Finalizar Liga</button>
+
+<table id="tabela">
 <thead>
 <tr>
 <th>Pos</th><th>Time</th><th>P</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>SG</th>
 </tr>
 </thead>
 <tbody></tbody>
-</table><h2>Jogos</h2>
-<div id="jogos"></div><h2>Mata-mata</h2>
-<div id="mata"></div></div><script>
+</table>
+
+<h2>Jogos</h2>
+<div id="jogos"></div>
+
+<h2>Mata-mata</h2>
+<div id="mata"></div>
+
+</div>
+
+<script>
 let times=[];
 let tabela={};
 
@@ -42,7 +81,7 @@ function adicionarTime(){
  let nome=document.getElementById("novoTime").value.trim();
  if(!nome) return;
 
- if(times.includes(nome)) return; // evita duplicado
+ if(times.includes(nome)) return;
 
  times.push(nome);
  tabela[nome]={pts:0,v:0,e:0,d:0,gp:0,gc:0,j:0};
@@ -88,7 +127,6 @@ function gerarJogos(){
 }
 
 function atualizar(){
- // reset geral
  for(let t of times){
   tabela[t]={pts:0,v:0,e:0,d:0,gp:0,gc:0,j:0};
  }
@@ -248,63 +286,8 @@ function criarDuelo(t1,t2,id,final=false){
    <div class="time">${t1}</div>
  </div>
  `;
-}(){
- let final=document.getElementById("final");
- if(!final) return;
-
- let g1=parseInt(final.children[1].children[0].value);
- let g2=parseInt(final.children[1].children[2].value);
-
- if(isNaN(g1)||isNaN(g2)) return;
-
- let t1=document.getElementById("final1").innerText;
- let t2=document.getElementById("final2").innerText;
-
- let c=document.getElementById("campeao");
-
- if(g1>g2){
-  c.innerHTML=`🏆 CAMPEÃO: <span style="color:#22c55e">${t1}</span>`;
- }else if(g2>g1){
-  c.innerHTML=`🏆 CAMPEÃO: <span style="color:#22c55e">${t2}</span>`;
- }else{
-  c.innerHTML="Empate na final";
- }
 }
+</script>
 
- let m=document.getElementById("mata");
- let a=window.classificados;
-
- m.innerHTML="<h3>Semifinais</h3>";
- m.innerHTML+=criarDuelo(a[0].time,a[3].time);
- m.innerHTML+=criarDuelo(a[1].time,a[2].time);
-
- m.innerHTML+="<h3>Final</h3>";
- m.innerHTML+=`<div class="jogo"><div class="time">Vencedor 1</div><div class="placar"><input> x <input></div><div class="time">Vencedor 2</div></div>`;
-}
-
-function criarDuelo(t1,t2,id,final=false){
- return `
- <p><b>${t1} x ${t2} (Ida)</b></p>
- <div class="jogo" data-duelo="${id}">
-   <div class="time">${t1}</div>
-   <div class="placar">
-     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}"> x
-     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}">
-   </div>
-   <div class="time">${t2}</div>
- </div>
-
- <p><b>${t2} x ${t1} (Volta)</b></p>
- <div class="jogo" data-duelo="${id}">
-   <div class="time">${t2}</div>
-   <div class="placar">
-     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}"> x
-     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}">
-   </div>
-   <div class="time">${t1}</div>
- </div>
- `;
-}
-
-</script></body>
+</body>
 </html>
