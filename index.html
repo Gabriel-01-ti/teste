@@ -1,26 +1,335 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <script>
-        function calcularSemis() {
-            // Existing logic
-            setTimeout(function() {
-                // Logic to load finals after semifinals
-            }, 1000); // Adjust the delay as needed
-        }
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Quintals League</title><style>
 
-        function criarDuelo() {
-            // Existing logic
-            const inputs = document.querySelectorAll('input[type="number"]');
-            inputs.forEach(input => {
-                input.setAttribute('min', '0');
-            });
-        }
-    </script>
-</body>
-</html>
+body { font-family: Arial; background:#0b0f2a; color:white; margin:0; }
+
+header { background: linear-gradient(135deg,#0f172a,#1e3a8a); text-align:center; padding:20px 10px; }
+
+header h1 { margin:0; font-size:26px; letter-spacing:2px; background: linear-gradient(90deg,#3b82f6,#22c55e); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+header img { width:120px; margin-top:10px; border-radius:10px; }
+
+.container { padding:10px; }
+
+input, button { width:100%; padding:14px; margin:6px 0; border-radius:10px; border:none; }
+button { background:#2563eb; color:white; font-weight:bold; }
+
+/* tabela */
+table { width:100%; border-collapse:collapse; margin-top:10px; }
+th, td { padding:8px; border-top:1px solid #1f2937; }
+th { color:#9ca3af; }
+tr { background:#111827; }
+.top { border-left:4px solid #3b82f6; }
+
+/* jogos */
+.jogo {
+display:grid;
+grid-template-columns: 1fr auto 1fr;
+align-items:center;
+background:#1e293b;
+padding:10px;
+margin:6px 0;
+border-radius:10px;
+gap:8px;
+}
+.time { text-align:center; font-size:13px; }
+.placar { display:flex; gap:5px; align-items:center; }
+.placar input { width:40px; height:35px; text-align:center; }
+
+/* 🔥 CHAVE ESTILO CHAMPIONS */
+.chave {
+  display:flex;
+  justify-content:space-between;
+  margin-top:20px;
+  gap:20px;
+}
+
+.coluna {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.coluna h3 {
+  text-align:center;
+  color:#9ca3af;
+}
+
+.duelo {
+  background:#0f172a;
+  padding:12px;
+  border-radius:14px;
+  margin-bottom:20px;
+  box-shadow:0 0 15px rgba(0,0,0,0.6);
+  border:1px solid #1e3a8a;
+}
+
+.final {
+  align-items:center;
+}
+
+</style></head><body>
+
+<header>
+<h1>🏆 UEFA QUINTALS LEAGUE</h1>
+<img src="Champions-League-com-novo-formato-comeca-hoje.-Confira-os-jogos.jpg">
+</header>
+
+<div class="container">
+
+<input id="novoTime" placeholder="Digite um time">
+<button onclick="adicionarTime()">Adicionar Time</button>
+<button onclick="finalizarLiga()">Finalizar Liga</button>
+<button onclick="forcarFinal()">Finalizar Semis</button>
+
+<table id="tabela">
+<thead>
+<tr>
+<th>Pos</th><th>Time</th><th>P</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>SG</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<h2>Jogos</h2>
+<div id="jogos"></div>
+
+<h2>Mata-mata</h2>
+<div id="mata"></div>
+
+</div>
+
+<script>
+
+let times=[];
+let tabela={};
+
+document.getElementById("novoTime").addEventListener("keypress", e=>{
+ if(e.key==="Enter") adicionarTime();
+});
+
+function adicionarTime(){
+ let nome=document.getElementById("novoTime").value.trim();
+ if(!nome) return;
+
+ if(times.includes(nome)) return;
+
+ times.push(nome);
+ tabela[nome]={pts:0,v:0,e:0,d:0,gp:0,gc:0,j:0};
+ document.getElementById("novoTime").value="";
+
+ gerarJogos();
+ atualizar();
+}
+
+function gerarJogos(){
+ let div=document.getElementById("jogos");
+ div.innerHTML="";
+ if(times.length<2) return;
+
+ let lista=[...times];
+ if(lista.length%2) lista.push("BYE");
+ let n=lista.length;
+ let arr=lista.slice();
+
+ for(let r=0;r<n-1;r++){
+  div.innerHTML+=`<h3 style="color:#9ca3af">Rodada ${r+1}</h3>`;
+
+  for(let i=0;i<n/2;i++){
+   let t1=arr[i];
+   let t2=arr[n-1-i];
+
+   if(t1!=="BYE" && t2!=="BYE"){
+    div.innerHTML+=`
+    <div class="jogo">
+      <div class="time">${t1}</div>
+      <div class="placar">
+        <input type="number" min="0" oninput="atualizar()">
+        <span>x</span>
+        <input type="number" min="0" oninput="atualizar()">
+      </div>
+      <div class="time">${t2}</div>
+    </div>`;
+   }
+  }
+
+  arr.splice(1,0,arr.pop());
+ }
+}
+
+function atualizar(){
+ for(let t of times){
+  tabela[t]={pts:0,v:0,e:0,d:0,gp:0,gc:0,j:0};
+ }
+
+ let jogos=document.querySelectorAll('.jogo');
+
+ jogos.forEach(j=>{
+  let t1=j.children[0].innerText;
+  let t2=j.children[2].innerText;
+
+  if(!tabela[t1] || !tabela[t2]) return;
+
+  let g1=parseInt(j.children[1].children[0].value);
+  let g2=parseInt(j.children[1].children[2].value);
+
+  if(isNaN(g1)||isNaN(g2)) return;
+
+  tabela[t1].gp+=g1; tabela[t1].gc+=g2;
+  tabela[t2].gp+=g2; tabela[t2].gc+=g1;
+
+  tabela[t1].j++; tabela[t2].j++;
+
+  if(g1>g2){ tabela[t1].pts+=3; tabela[t1].v++; tabela[t2].d++; }
+  else if(g2>g1){ tabela[t2].pts+=3; tabela[t2].v++; tabela[t1].d++; }
+  else{ tabela[t1].pts++; tabela[t2].pts++; tabela[t1].e++; tabela[t2].e++; }
+ });
+
+ let lista=Object.keys(tabela).map(t=>({
+  time:t,
+  ...tabela[t],
+  sg:tabela[t].gp-tabela[t].gc
+ }));
+
+ lista.sort((a,b)=>b.pts-a.pts||b.sg-a.sg||b.gp-a.gp);
+
+ let tbody=document.querySelector("#tabela tbody");
+ tbody.innerHTML="";
+
+ lista.forEach((t,i)=>{
+  let tr=document.createElement("tr");
+  if(i<4) tr.classList.add("top");
+
+  tr.innerHTML=`
+  <td>${i+1}</td>
+  <td>${t.time}</td>
+  <td>${t.pts}</td>
+  <td>${t.j}</td>
+  <td>${t.v}</td>
+  <td>${t.e}</td>
+  <td>${t.d}</td>
+  <td>${t.gp}</td>
+  <td>${t.sg}</td>`;
+
+  tbody.appendChild(tr);
+ });
+
+ window.classificados=lista.slice(0,4);
+}
+
+/* 🔥 CHAVE BONITA */
+function finalizarLiga(){
+ if(!window.classificados || window.classificados.length<4){
+  alert("Precisa de pelo menos 4 times");
+  return;
+ }
+
+ let m=document.getElementById("mata");
+ let a=window.classificados;
+
+ m.innerHTML=`
+ <div class="chave">
+
+   <div class="coluna">
+     <h3>Semifinais</h3>
+     <div class="duelo">${criarDuelo(a[0].time,a[3].time,"semi1")}</div>
+     <div class="duelo">${criarDuelo(a[1].time,a[2].time,"semi2")}</div>
+   </div>
+
+   <div class="coluna final">
+     <h3>Final</h3>
+     <div id="finalArea"></div>
+     <h2 id="campeao"></h2>
+   </div>
+
+ </div>
+ `;
+}
+
+/* ✅ CORRIGIDO */
+function calcularSemis(){
+ let vencedores=[];
+
+ ["semi1","semi2"].forEach(id=>{
+  let jogos=document.querySelectorAll(`[data-duelo='${id}']`);
+  if(jogos.length<2) return;
+
+  let t1=jogos[0].children[0].innerText;
+  let t2=jogos[0].children[2].innerText;
+
+  let total1=0,total2=0,ok=0;
+
+  jogos.forEach(j=>{
+    let casa=j.children[0].innerText;
+    let g1=parseInt(j.children[1].children[0].value);
+    let g2=parseInt(j.children[1].children[2].value);
+
+    if(isNaN(g1)||isNaN(g2)) return;
+
+    ok++;
+
+    if(casa===t1){ total1+=g1; total2+=g2; }
+    else{ total1+=g2; total2+=g1; }
+  });
+
+  if(ok===2){
+    if(total1>total2) vencedores.push(t1);
+    else if(total2>total1) vencedores.push(t2);
+  }
+ });
+
+ if(vencedores.length===2){
+  document.getElementById("finalArea").innerHTML=
+  `<div class="duelo">${criarDuelo(vencedores[0],vencedores[1],"final",true)}</div>`;
+ }
+}
+
+function verCampeao(){
+ let jogos=document.querySelectorAll("[data-duelo='final']");
+ if(jogos.length<2) return;
+
+ let t1=jogos[0].children[0].innerText;
+ let t2=jogos[0].children[2].innerText;
+
+ let g1=0,g2=0;
+
+ jogos.forEach(j=>{
+  let a=parseInt(j.children[1].children[0].value);
+  let b=parseInt(j.children[1].children[2].value);
+  if(!isNaN(a)&&!isNaN(b)){ g1+=a; g2+=b; }
+ });
+
+ let c=document.getElementById("campeao");
+
+ if(g1>g2) c.innerHTML=`🏆 ${t1}`;
+ else if(g2>g1) c.innerHTML=`🏆 ${t2}`;
+ else c.innerHTML="Empate";
+}
+
+function criarDuelo(t1,t2,id,final=false){
+ return `
+ <p><b>${t1} x ${t2}</b></p>
+ <div class="jogo" data-duelo="${id}">
+   <div class="time">${t1}</div>
+   <div class="placar">
+     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}"> x
+     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}">
+   </div>
+   <div class="time">${t2}</div>
+ </div>
+
+ <p><b>${t2} x ${t1}</b></p>
+ <div class="jogo" data-duelo="${id}">
+   <div class="time">${t2}</div>
+   <div class="placar">
+     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}"> x
+     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}">
+   </div>
+   <div class="time">${t1}</div>
+ </div>
+ `;
+}
+
+function forcarFinal(){ calcularSemis(); }
+
+</script></body></html>
