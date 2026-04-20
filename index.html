@@ -282,19 +282,25 @@ function criarDuelo(t1,t2,id,final=false){
  m.innerHTML+=`<div class="jogo"><div class="time">Vencedor 1</div><div class="placar"><input> x <input></div><div class="time">Vencedor 2</div></div>`;
 }
 
-function criarDuelo(t1,t2){
+function criarDuelo(t1,t2,id,final=false){
  return `
  <p><b>${t1} x ${t2} (Ida)</b></p>
- <div class="jogo">
+ <div class="jogo" data-duelo="${id}">
    <div class="time">${t1}</div>
-   <div class="placar"><input> x <input></div>
+   <div class="placar">
+     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}"> x
+     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}">
+   </div>
    <div class="time">${t2}</div>
  </div>
 
  <p><b>${t2} x ${t1} (Volta)</b></p>
- <div class="jogo">
+ <div class="jogo" data-duelo="${id}">
    <div class="time">${t2}</div>
-   <div class="placar"><input> x <input></div>
+   <div class="placar">
+     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}"> x
+     <input type="number" oninput="${final?"verCampeao()":"calcularSemis()"}">
+   </div>
    <div class="time">${t1}</div>
  </div>
  `;
