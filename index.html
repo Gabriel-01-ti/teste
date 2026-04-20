@@ -10,12 +10,15 @@ header img { width:120px; margin-top:10px; border-radius:10px; }
 
 .container { padding:10px; }
 
-input, button { width:100%; padding:14px; margin:6px 0; border-radius:10px; border:none; }
-button { background:#2563eb; color:white; font-weight:bold; }
+input, button { width:100%; padding:14px; margin:6px 0; border-radius:10px; border:none; transition: 0.3s; }
+button { background:#2563eb; color:white; font-weight:bold; cursor:pointer; }
+button:hover { opacity: 0.8; }
+
+.btn-reiniciar { background: #dc2626; margin-top: 20px; }
 
 /* tabela */
 table { width:100%; border-collapse:collapse; margin-top:10px; }
-th, td { padding:8px; border-top:1px solid #1f2937; }
+th, td { padding:8px; border-top:1px solid #1f2937; text-align: center; }
 th { color:#9ca3af; }
 tr { background:#111827; }
 .top { border-left:4px solid #3b82f6; }
@@ -31,44 +34,15 @@ margin:6px 0;
 border-radius:10px;
 gap:8px;
 }
-.time { text-align:center; font-size:13px; }
+.time { text-align:center; font-size:13px; font-weight: bold; }
 .placar { display:flex; gap:5px; align-items:center; }
-.placar input { width:40px; height:35px; text-align:center; }
+.placar input { width:40px; height:35px; text-align:center; border-radius: 5px; border: none; }
 
-/* 🔥 CHAVE ESTILO CHAMPIONS */
-.chave {
-  display:flex;
-  justify-content:space-between;
-  margin-top:20px;
-  gap:20px;
-}
-
-.coluna {
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-}
-
-.coluna h3 {
-  text-align:center;
-  color:#9ca3af;
-}
-
-.duelo {
-  background:#0f172a;
-  padding:12px;
-  border-radius:14px;
-  margin-bottom:20px;
-  box-shadow:0 0 15px rgba(0,0,0,0.6);
-  border:1px solid #1e3a8a;
-}
-
-.final {
-  align-items:center;
-}
-
-/* Bolinhas de Pênaltis */
+/* CHAVE */
+.chave { display:flex; justify-content:space-between; margin-top:20px; gap:20px; }
+.coluna { flex:1; display:flex; flex-direction:column; justify-content:center; }
+.coluna h3 { text-align:center; color:#9ca3af; }
+.duelo { background:#0f172a; padding:12px; border-radius:14px; margin-bottom:20px; border:1px solid #1e3a8a; }
 .btn-penalti { cursor:pointer; font-size:22px; margin:0 2px; }
 
 </style></head><body>
@@ -82,7 +56,7 @@ gap:8px;
 
 <input id="novoTime" placeholder="Digite um time">
 <button onclick="adicionarTime()">Adicionar Time</button>
-<button onclick="finalizarLiga()">Finalizar Liga</button>
+<button id="btnFinalizarLiga" onclick="finalizarLiga()">Finalizar Liga</button>
 
 <table id="tabela">
 <thead>
@@ -103,169 +77,156 @@ gap:8px;
 Finalizar Semifinais
 </button>
 
+<button class="btn-reiniciar" onclick="reiniciarTudo()">🔄 Reiniciar Campeonato</button>
+
 </div>
 
 <script>
+let times = JSON.parse(localStorage.getItem('times_q')) || [];
+let tabela = JSON.parse(localStorage.getItem('tabela_q')) || {};
+let mataHTML = localStorage.getItem('mata_q') || "";
 
-let times = JSON.parse(localStorage.getItem('times_league')) || [];
-let tabela = JSON.parse(localStorage.getItem('tabela_league')) || {};
-window.winner_semi1 = null;
-window.winner_semi2 = null;
-
-window.onload = () => { if(times.length > 0) { atualizar(); gerarJogos(); } };
+window.onload = () => {
+    if(times.length > 0) {
+        atualizarTabelaDOM();
+        gerarJogosDOM();
+        if(mataHTML) {
+            document.getElementById("mata").innerHTML = mataHTML;
+            // Recupera placares digitados se houver (opcional, aqui foca em manter a estrutura)
+        }
+    }
+};
 
 function salvar() {
-    localStorage.setItem('times_league', JSON.stringify(times));
-    localStorage.setItem('tabela_league', JSON.stringify(tabela));
+    localStorage.setItem('times_q', JSON.stringify(times));
+    localStorage.setItem('tabela_q', JSON.stringify(tabela));
+    localStorage.setItem('mata_q', document.getElementById("mata").innerHTML);
 }
-
-document.getElementById("novoTime").addEventListener("keypress", e=>{
- if(e.key==="Enter") adicionarTime();
-});
 
 function adicionarTime(){
- let nome=document.getElementById("novoTime").value.trim();
- if(!nome || times.includes(nome)) return;
- times.push(nome);
- tabela[nome]={pts:0,v:0,e:0,d:0,gp:0,gc:0,j:0};
- document.getElementById("novoTime").value="";
- gerarJogos();
- atualizar();
- salvar();
+    let nome=document.getElementById("novoTime").value.trim();
+    if(!nome || times.includes(nome)) return;
+    times.push(nome);
+    tabela[nome]={pts:0,v:0,e:0,d:0,gp:0,gc:0,j:0};
+    document.getElementById("novoTime").value="";
+    gerarJogosDOM();
+    atualizarTabelaDOM();
+    salvar();
 }
 
-function gerarJogos(){
- let div=document.getElementById("jogos");
- div.innerHTML="";
- if(times.length<2) return;
- let lista=[...times];
- if(lista.length%2) lista.push("BYE");
- let n=lista.length;
- let arr=lista.slice();
- for(let r=0;r<n-1;r++){
-  div.innerHTML+=`<h3 style="color:#9ca3af">Rodada ${r+1}</h3>`;
-  for(let i=0;i<n/2;i++){
-   let t1=arr[i]; let t2=arr[n-1-i];
-   if(t1!=="BYE" && t2!=="BYE"){
-    div.innerHTML+=`<div class="jogo"><div class="time">${t1}</div><div class="placar"><input type="number" min="0" oninput="atualizar()"><span>x</span><input type="number" min="0" oninput="atualizar()"></div><div class="time">${t2}</div></div>`;
-   }
-  }
-  arr.splice(1,0,arr.pop());
- }
+function gerarJogosDOM(){
+    let div=document.getElementById("jogos");
+    div.innerHTML="";
+    if(times.length<2) return;
+    let lista=[...times];
+    if(lista.length%2) lista.push("BYE");
+    let n=lista.length;
+    let arr=lista.slice();
+    for(let r=0;r<n-1;r++){
+        div.innerHTML+=`<h3 style="color:#9ca3af">Rodada ${r+1}</h3>`;
+        for(let i=0;i<n/2;i++){
+            let t1=arr[i]; let t2=arr[n-1-i];
+            if(t1!=="BYE" && t2!=="BYE"){
+                div.innerHTML+=`<div class="jogo"><div class="time">${t1}</div><div class="placar"><input type="number" min="0" oninput="atualizarTabelaDOM()"><span>x</span><input type="number" min="0" oninput="atualizarTabelaDOM()"></div><div class="time">${t2}</div></div>`;
+            }
+        }
+        arr.splice(1,0,arr.pop());
+    }
 }
 
-function atualizar(){
- for(let t of times) tabela[t]={pts:0,v:0,e:0,d:0,gp:0,gc:0,j:0};
- document.querySelectorAll('#jogos .jogo').forEach(j=>{
-  let t1=j.children[0].innerText; let t2=j.children[2].innerText;
-  let g1=parseInt(j.children[1].children[0].value); let g2=parseInt(j.children[1].children[2].value);
-  if(isNaN(g1)||isNaN(g2)) return;
-  tabela[t1].gp+=g1; tabela[t1].gc+=g2; tabela[t2].gp+=g2; tabela[t2].gc+=g1; tabela[t1].j++; tabela[t2].j++;
-  if(g1>g2){ tabela[t1].pts+=3; tabela[t1].v++; tabela[t2].d++; }
-  else if(g2>g1){ tabela[t2].pts+=3; tabela[t2].v++; tabela[t1].d++; }
-  else{ tabela[t1].pts++; tabela[t2].pts++; tabela[t1].e++; tabela[t2].e++; }
- });
- let lista=Object.keys(tabela).map(t=>({time:t, ...tabela[t], sg:tabela[t].gp-tabela[t].gc}));
- lista.sort((a,b)=>b.pts-a.pts||b.sg-a.sg||b.gp-a.gp);
- let tbody=document.querySelector("#tabela tbody"); tbody.innerHTML="";
- lista.forEach((t,i)=>{
-  let tr=document.createElement("tr"); if(i<4) tr.classList.add("top");
-  tr.innerHTML=`<td>${i+1}</td><td>${t.time}</td><td>${t.pts}</td><td>${t.j}</td><td>${t.v}</td><td>${t.e}</td><td>${t.d}</td><td>${t.gp}</td><td>${t.sg}</td>`;
-  tbody.appendChild(tr);
- });
- window.classificados=lista.slice(0,4);
- salvar();
+function atualizarTabelaDOM(){
+    for(let t of times) tabela[t]={pts:0,v:0,e:0,d:0,gp:0,gc:0,j:0};
+    document.querySelectorAll('#jogos .jogo').forEach(j=>{
+        let t1=j.children[0].innerText; let t2=j.children[2].innerText;
+        let g1=parseInt(j.children[1].children[0].value); let g2=parseInt(j.children[1].children[2].value);
+        if(isNaN(g1)||isNaN(g2)) return;
+        tabela[t1].gp+=g1; tabela[t1].gc+=g2; tabela[t2].gp+=g2; tabela[t2].gc+=g1; tabela[t1].j++; tabela[t2].j++;
+        if(g1>g2){ tabela[t1].pts+=3; tabela[t1].v++; tabela[t2].d++; }
+        else if(g2>g1){ tabela[t2].pts+=3; tabela[t2].v++; tabela[t1].d++; }
+        else{ tabela[t1].pts++; tabela[t2].pts++; tabela[t1].e++; tabela[t2].e++; }
+    });
+    let lista=Object.keys(tabela).map(t=>({time:t, ...tabela[t], sg:tabela[t].gp-tabela[t].gc}));
+    lista.sort((a,b)=>b.pts-a.pts||b.sg-a.sg||b.gp-a.gp);
+    let tbody=document.querySelector("#tabela tbody"); tbody.innerHTML="";
+    lista.forEach((t,i)=>{
+        let tr=document.createElement("tr"); if(i<4) tr.classList.add("top");
+        tr.innerHTML=`<td>${i+1}</td><td>${t.time}</td><td>${t.pts}</td><td>${t.j}</td><td>${t.v}</td><td>${t.e}</td><td>${t.d}</td><td>${t.gp}</td><td>${t.sg}</td>`;
+        tbody.appendChild(tr);
+    });
+    window.classificados=lista.slice(0,4);
+    salvar();
 }
 
 function finalizarLiga(){
- if(!window.classificados || window.classificados.length<4) return alert("Precisa de 4 times");
- let m=document.getElementById("mata"); let a=window.classificados;
- m.innerHTML=`
- <div class="chave">
-   <div class="coluna">
-     <h3>Semifinais</h3>
-     <div class="duelo">${criarDuelo(a[0].time,a[3].time,"semi1")}</div>
-     <div class="duelo">${criarDuelo(a[1].time,a[2].time,"semi2")}</div>
-   </div>
-   <div class="coluna final">
-     <h3>Final</h3>
-     <div id="finalArea"></div>
-     <h2 id="campeao" style="text-align:center"></h2>
-   </div>
- </div>`;
+    if(!window.classificados || window.classificados.length<4) return alert("Precisa de 4 times");
+    let m=document.getElementById("mata"); let a=window.classificados;
+    m.innerHTML=`
+    <div class="chave">
+        <div class="coluna">
+            <h3>Semifinais</h3>
+            <div class="duelo">${criarDuelo(a[0].time,a[3].time,"semi1")}</div>
+            <div class="duelo">${criarDuelo(a[1].time,a[2].time,"semi2")}</div>
+        </div>
+        <div class="coluna final">
+            <h3>Final</h3>
+            <div id="finalArea"></div>
+            <h2 id="campeao" style="text-align:center; color:#22c55e"></h2>
+        </div>
+    </div>`;
+    salvar();
 }
 
 function criarDuelo(t1, t2, id) {
-  return `
-  <p><b>Ida: ${t1} x ${t2}</b></p>
-  <div class="jogo" data-duelo="${id}">
-    <div class="time">${t1}</div>
-    <div class="placar"><input type="number"> x <input type="number"></div>
-    <div class="time">${t2}</div>
-  </div>
-  <p><b>Volta: ${t2} x ${t1}</b></p>
-  <div class="jogo" data-duelo="${id}">
-    <div class="time">${t2}</div>
-    <div class="placar"><input type="number"> x <input type="number"></div>
-    <div class="time">${t1}</div>
-  </div>
-  <div id="pen-container-${id}"></div>`;
+    return `
+    <p><b>Ida: ${t1} x ${t2}</b></p>
+    <div class="jogo" data-duelo="${id}">
+        <div class="time">${t1}</div>
+        <div class="placar"><input type="number"> x <input type="number"></div>
+        <div class="time">${t2}</div>
+    </div>
+    <p><b>Volta: ${t2} x ${t1}</b></p>
+    <div class="jogo" data-duelo="${id}">
+        <div class="time">${t2}</div>
+        <div class="placar"><input type="number"> x <input type="number"></div>
+        <div class="time">${t1}</div>
+    </div>
+    <div id="pen-container-${id}"></div>`;
 }
 
 function forcarFinal() {
-  let vencedores = [];
-  const IDs = ["semi1", "semi2"];
-
-  for (let id of IDs) {
-    let jogos = document.querySelectorAll(`[data-duelo='${id}']`);
-    let t1 = jogos[0].children[0].innerText;
-    let t2 = jogos[0].children[2].innerText;
-    let tot1 = 0, tot2 = 0, ok = 0;
-
-    jogos.forEach(j => {
-      let g1 = parseInt(j.querySelector('input:first-child').value);
-      let g2 = parseInt(j.querySelector('input:last-child').value);
-      if (!isNaN(g1) && !isNaN(g2)) {
-        ok++;
-        if (j.children[0].innerText === t1) { tot1 += g1; tot2 += g2; }
-        else { tot1 += g2; tot2 += g1; }
-      }
-    });
-
-    if (ok < 2) return alert("Preencha todos os placares das Semis!");
-
-    if (tot1 === tot2) {
-        if (!window["winner_" + id]) {
-            exibirPenaltis(t1, t2, id);
-            return alert("Empate! Resolva nos pênaltis abaixo.");
-        }
-        vencedores.push(window["winner_" + id]);
-    } else {
-        vencedores.push(tot1 > tot2 ? t1 : t2);
+    let vencedores = [];
+    const IDs = ["semi1", "semi2"];
+    for (let id of IDs) {
+        let jogos = document.querySelectorAll(`[data-duelo='${id}']`);
+        if(!jogos.length) return;
+        let t1 = jogos[0].children[0].innerText;
+        let t2 = jogos[0].children[2].innerText;
+        let tot1 = 0, tot2 = 0, ok = 0;
+        jogos.forEach(j => {
+            let g1 = parseInt(j.querySelector('input:first-child').value);
+            let g2 = parseInt(j.querySelector('input:last-child').value);
+            if (!isNaN(g1) && !isNaN(g2)) {
+                ok++;
+                if (j.children[0].innerText === t1) { tot1 += g1; tot2 += g2; }
+                else { tot1 += g2; tot2 += g1; }
+            }
+        });
+        if (ok < 2) return alert("Preencha as semis!");
+        if (tot1 === tot2) {
+            if (!window["winner_" + id]) { exibirPenaltis(t1, t2, id); return alert("Resolva os pênaltis!"); }
+            vencedores.push(window["winner_" + id]);
+        } else { vencedores.push(tot1 > tot2 ? t1 : t2); }
     }
-  }
-
-  if (vencedores.length === 2) {
-    document.getElementById("btnForcarSemis").style.display = "none";
-    document.getElementById("finalArea").innerHTML = `
-      <div class="duelo">${criarDuelo(vencedores[0], vencedores[1], "final")}</div>
-      <button id="btnVerCampeao" onclick="verCampeao()" style="background:#22c55e">Ver Campeão</button>
-    `;
-  }
+    if (vencedores.length === 2) {
+        document.getElementById("btnForcarSemis").style.display = "none";
+        document.getElementById("finalArea").innerHTML = `<div class="duelo">${criarDuelo(vencedores[0], vencedores[1], "final")}</div><button id="btnVerCampeao" onclick="verCampeao()" style="background:#22c55e">Ver Campeão</button>`;
+        salvar();
+    }
 }
 
 function exibirPenaltis(t1, t2, id) {
     let cont = document.getElementById("pen-container-" + id);
-    if (cont.innerHTML !== "") return;
-    cont.innerHTML = `
-    <div style="border:1px dashed #fbbf24; padding:10px; border-radius:10px; margin-top:5px; text-align:center">
-        <small style="color:#fbbf24">PÊNALTIS (3 iniciais)</small>
-        <div style="display:flex; justify-content:space-around; margin-top:5px">
-            <div id="p-t1-${id}"><b>${t1}:</b></div>
-            <div id="p-t2-${id}"><b>${t2}:</b></div>
-        </div>
-        <button onclick="confirmarPen('${t1}','${t2}','${id}')" style="background:#fbbf24; font-size:11px; padding:5px; margin-top:5px">Confirmar Vencedor</button>
-    </div>`;
+    cont.innerHTML = `<div style="border:1px dashed #fbbf24; padding:5px; border-radius:10px; text-align:center"><small>PÊNALTIS</small><div style="display:flex; justify-content:space-around"><div id="p-t1-${id}"><b>${t1}</b>:</div><div id="p-t2-${id}"><b>${t2}</b>:</div></div><button onclick="confirmarPen('${t1}','${t2}','${id}')" style="background:#fbbf24; font-size:10px; padding:5px; height:auto">OK</button></div>`;
     for(let i=0; i<3; i++) { addBol(id, 1); addBol(id, 2); }
 }
 
@@ -285,15 +246,13 @@ function confirmarPen(t1, t2, id) {
     let g2 = document.getElementById(`p-t2-${id}`).querySelectorAll('[data-val="1"]').length;
     if(g1 === g2) return alert("Pênaltis empatados!");
     window["winner_" + id] = g1 > g2 ? t1 : t2;
-    alert("Vencedor: " + window["winner_" + id] + ". Agora clique em Finalizar Semifinais novamente.");
+    alert("Vencedor: " + window["winner_" + id]);
 }
 
 function verCampeao() {
     let jogos = document.querySelectorAll("[data-duelo='final']");
-    let t1 = jogos[0].children[0].innerText;
-    let t2 = jogos[0].children[2].innerText;
+    let t1 = jogos[0].children[0].innerText; let t2 = jogos[0].children[2].innerText;
     let g1 = 0, g2 = 0, ok = 0;
-
     jogos.forEach(j => {
         let v1 = parseInt(j.querySelector('input:first-child').value);
         let v2 = parseInt(j.querySelector('input:last-child').value);
@@ -303,20 +262,21 @@ function verCampeao() {
             else { g1 += v2; g2 += v1; }
         }
     });
-
     if(ok < 2) return alert("Preencha a final!");
-
     if(g1 === g2) {
-        if(!window.winner_final) {
-            exibirPenaltis(t1, t2, "final");
-            return alert("Final empatada! Resolva nos pênaltis.");
-        }
+        if(!window.winner_final) { exibirPenaltis(t1, t2, "final"); return alert("Pênaltis na final!"); }
         document.getElementById("campeao").innerHTML = "🏆 CAMPEÃO: " + window.winner_final;
-        document.getElementById("btnVerCampeao").style.display = "none";
     } else {
         document.getElementById("campeao").innerHTML = "🏆 CAMPEÃO: " + (g1 > g2 ? t1 : t2);
-        document.getElementById("btnVerCampeao").style.display = "none";
     }
+    document.getElementById("btnVerCampeao").style.display = "none";
+    salvar();
 }
 
+function reiniciarTudo() {
+    if(confirm("Tem certeza que deseja apagar tudo e recomeçar?")) {
+        localStorage.clear();
+        location.reload();
+    }
+}
 </script></body></html>
